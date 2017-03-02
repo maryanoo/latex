@@ -1,0 +1,1032 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% LaTeX book template                           %%
+%% Author:  Amber Jain (http://amberj.devio.us/) %%
+%% License: ISC license                          %%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% !TeX program = lualatex
+\documentclass[a4paper,11pt,oneside]{book}
+\usepackage{polyglossia}
+\setdefaultlanguage{polish}
+%\setmainfont{Iwona}
+\defaultfontfeatures{Ligatures=TeX}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{lscape}
+\usepackage{array}
+\usepackage{chngpage}
+\usepackage{subcaption} 
+\usepackage{listings}
+\usepackage{underscore}
+\usepackage{epstopdf}
+\usepackage{longtable}
+\usepackage{marginnote}
+\usepackage{url}
+\usepackage[toc,page]{appendix}
+\usepackage{tikz}
+\usepackage{pdflscape}
+\usepackage{xcolor}
+\lstset{basicstyle=\footnotesize\ttfamily,breaklines=true}
+\lstset{framextopmargin=50pt,commentstyle=\itshape\color{purple!40!black}}
+\lstset{
+	numbers=left,
+	stepnumber=1,    
+	firstnumber=1,
+	numberfirstline=false
+}
+
+\newcolumntype{L}[1]{>{\raggedright\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{C}[1]{>{\centering\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\newcolumntype{R}[1]{>{\raggedleft\let\newline\\\arraybackslash\hspace{0pt}}m{#1}}
+\raggedbottom
+\renewcommand{\baselinestretch}{1.25} 
+\newcommand{\mymarginpar}[1]{\marginpar{\captionsetup{font=footnotesize}#1}}
+\setlength{\parindent}{4em}
+\setlength{\parskip}{1em}
+\usepackage{marginnote}
+\usepackage{lipsum}
+\usepackage[
+			pdfencoding=auto,% or unicode
+			psdextra,
+			]{hyperref}
+\hypersetup{pdfinfo={
+		Title={GIS Kultura. Raport kończący projekt},
+		Author={Mariusz Piotrowski}
+}}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% First page of book which contains 'stuff' like: %
+%  - Book title, subtitle                         %
+%  - Book author name                             %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Book's title and subtitle
+\title{\Huge \textbf{Założenia projektowe i obszary zastosowań systemu GIS Kultura}  \\ \huge Raport kończący projekt budowy \\ systemu geolokalizacji \\ infrastruktury żywej kultury}
+% Author
+\author{\textsc{dr Mariusz Piotrowski}}
+
+
+\begin{document}
+
+\frontmatter
+\maketitle
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\pagestyle{empty}
+%% copyrightpage
+\begingroup
+\footnotesize
+\parindent 0pt
+\parskip \baselineskip
+%\textcopyright{} 2013 Jubobs \    All rights reserved.
+
+{\large Redakcja i korekta:\\
+prof. dr hab. Barbara Fatyga \\
+dr Bogna Kietlińska \\
+}
+\bigskip\\
+{\large Współpraca:\\
+mgr Piotr Michalski \\}
+
+skład komputerowy: Mariusz Piotrowski
+
+
+%%%%{\LARGE\plogo}
+\vspace*{2\baselineskip}
+
+Raport opublikowany na licencji Creative Common BY \& SA.
+
+
+\begin{center}
+	\begin{tabular}{ll}
+		Pierwsza wersja: grudzień 2016
+	\end{tabular}
+\end{center}
+\endgroup
+\clearpage
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Add a dedication paragraph to dedicate your book to someone %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Auto-generated table of contents, list of figures and list of tables %
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\tableofcontents
+\listoffigures
+\listoftables
+
+\mainmatter
+
+%%%%%%%%%%%
+% Preface %
+%%%%%%%%%%%
+\chapter{Przedmowa}
+
+
+\section*{Struktura raportu}
+% You might want to add short description about each chapter in this book.
+Raport ma charakter prezentacji metodologii pracy z danymi przestrzennymi o kulturze. Prezentacja wyników pracy zostanie poprzedzona rozdziałami opisującymi założenia teorii żywej kultury, w kontekście badania dostępności, oraz pogłębioną charakterystyką użytych danych. 
+
+\section*{Strona internetowa}
+Strona ozkultura.pl\footnote{\url{http://ozkultura.pl}} stanowi serce prezentowanego systemu. Szczególnie podczas lektury raportu warto zapoznać się z niektórymi podstronami:
+\begin{itemize}
+  \item Sekcja Słownik - zawiera definicje pojęć używanych w projekcie.
+  \item Sekcja GIS Kultura - oferuje dostęp do geoportalu.
+  \item Sekcja Teksty OZK-SB - prezentuje teksty metodologiczne dotyczące badań kultury.
+\end{itemize}
+
+\section*{Narzędzia}
+Projekt GIS Kultura bazuje na oprogramowaniu o otwartych źródłach. Narzędzia udostępnione na jednej z otwartych licencji zostały użyte na każdym z etapów prac, począwszy od przetwarzania i przechowywania danych, przez analizy, a kończąc na tym raporcie:
+\begin{itemize}
+  \item Dane projektu są przechowywane w bazie Postgresql\footnote{\url{https://www.postgresql.org/}}, rozszerzonej o dodatki: Postgis\footnote{\url{http://postgis.net/}} i Pgrouting\footnote{\url{http://pgrouting.org//}}.
+  \item Wizualizacja danych przestrzennych została przeprowadzona w programie QGIS.\footnote{\url{http://www.qgis.org/pl/site/}}.
+  \item Pozostałe wizualizacje zostały wykonane przy użyciu pakietu ggplot2 programu R.\footnote{\url{https://cran.r-project.org/}}.
+  \item Skład tekstu został wykonany w systemie \LaTeX.
+\end{itemize}
+
+%%%%%%%%%%%%%%%%
+% NEW CHAPTER! %
+%%%%%%%%%%%%%%%%
+\chapter{Założenia systemu GIS Kultura}
+
+
+
+W ramach trzyletniego projektu Fundacji Obserwatorium Żywej Kultury - Sieć Badawcza realizowanego wraz z Wydziałem Geodezji i Kartografii Politechniki Warszawskiej, zbudowany został system analizy i wizualizacji danych „GIS Kultura”. System ten powstał przy wsparciu Ministerstwa Kultury i Dziedzictwa Narodowego, w ramach programu „Obserwatorium kultury”. Niniejszy raport stanowi podsumowanie podjętych działań oraz prezentuje system zbierania danych i analiz stanu kultury w Polsce.\par
+
+Obecnie istniejące systemy wizualizacji danych organizują informacje dotyczące różnych poziomów administracyjnych. Podstawowe źródło danych o kulturze - Bank Danych Lokalnych GUS - pozwala na zapoznanie się z danymi do poziomu gminy\footnote{\url{https://bdl.stat.gov.pl/BDL/start}}. Częściej jednak dane są agregowane i udostępniane tylko do poziomu powiatu, a nierzadko jedynie do poziomu województwa. Z potrzeby ujednolicania statystyk europejskich dane GUS są także organizowane w jednostkach statystycznych, takich jak regiony (NTS-1) i podregiony (NTS-3). Zarazem trzeba tu zaznaczyć, że sprawozdawczość kulturalna na poziomie europejskim jest szczątkowa. Mimo wszystkich wad i braków w sposobie zbierania danych o kulturze, statystyki GUS dotyczące kultury pozostają jedynym źródłem danych dla całego kraju. Dane te są zbierane z formularzy sprawozdawczości kulturalnej, oznaczonych numerami K-01 do K-10. Problematyka samego sposobu gromadzenia danych została obszernie opisana w raporcie podsumowującym projekt „Poprawa jakości gromadzenia danych o publicznych i niepublicznych instytucjach kultury w Polsce”.\footnote{Nowa sprawozdawczość instytucji kultury:\url{ http://badania-w-kulturze.mik.krakow.pl/files/nowa_sprawozdawczosc_BWK_raport_2015_9.pdf}}\par
+
+Jak pokazały analizy programu MKiDN „Obserwatorium Kultury”, istnieje niezwykle silna potrzeba zdobywania informacji o świecie kultury.\footnote{Przegląd najciekawszych raportów o kulturze Krzysztofa Olechnickiego i Tomasza Szlendaka został opublikowanych w 100 numerze NN6T, jest to wycinek Raportu o raportach. Wielowymiarowej i wielofunkcyjnej oceny trafności, recepcji i użyteczności raportów o stanie kultury. Pełna wersja, jednakże nie doczekała się publikacji w internecie, por.: \url{http://www.beczmiana.pl/1158,raport_o_raportach_o_kulturze.html}} Jednak zagadnienie krajobrazu rzeczywistości społecznej kształtowanego przez granice administracyjne, jest drugorzędne wobec problematyki zwykle podejmowanej w badaniach kultury, skupionych przede wszystkim na uczestnictwie. Z tego punktu widzenia takie tematy, jak analizy polityk kulturalnych, w których diagnozy dotyczą m.in. finansów jednostek samorządu terytorialnego, są jednym z pierwszych kroków do określenia stanu kultury w mieście A czy wsi B. W różnych proponowanych metodologiach badania kultury wyróżnić można takie obszary zagadnień jak: analiza praktyk kulturalnych, w tym praktyk kadr kultury i ich kompetencji, badania nad uczestnikami kultury, badania wydarzeń kulturalnych czy wreszcie infrastruktury kultury. I właśnie ten ostatni element - czyli ukazanie materialnych (infrastrukturalnych) warunków aktywności kulturalnej - stanowiło podstawowy cel budowy systemu gromadzenia i analizy danych o kulturze.\par
+
+
+Wizualizacja rozmieszczenia instytucji kultury i sposoby prezentowania takich danych w badaniach są możliwe np. dzięki serwisowi mojapolis.pl, a od 2015 roku w ramach geoportalu statystycznego GUS. Niemniej jednak, dane tam prezentowane są agregowane do poziomu gmin, co znacznie ogranicza możliwości wykonywania analiz relacji przestrzennych. Najczęściej bowiem dane takie są już w określony sposób zinterpretowane, chociażby przez użycie jednego, arbitralnie określonego, sposobu ich klasyfikacji. Są to więc narzędzia prezentujące pewną koncepcję teoretyczną, która zarazem (na ogół) nie jest wyartykułowana wprost. Takie systemy umożliwiają wykonywanie poprawnych analiz ich bardziej zaawansowanym użytkownikom, dostrzegającym ten problem, a mniej zaawansowanych narażając na rozmaite pochopne generalizacje. Zaprojektowane interfejsy dostępowe (geoportal gus, mojapolis, także dostęp do danych bdl poprzez serwis mojepanstwo.pl) stanowią zamknięte środowiska organizujące dane o różnym stopniu \textit{przyjazności} dla użytkownika w sposób względnie trwały. Natomiast - szczególnie w przypadku kultury, kiedy badane zjawiska mają charakter bardzo dynamiczny - metody analiz, organizacji danych i przeorganizowania tych informacji powinny być równie dynamiczne. Jest to możliwe wyłącznie dzięki możliwości operowania na danych źródłowych, pierwotnych. Budowa interfejsów koresponduje z budową teorii, która w tym przypadku, jest procesem \textit{kroczącym za badaczem} i zwykle nie jest na tyle gotowa by mogła być operacjonalizowana jako interfejs właśnie. Opisany stan rzeczy można uznać za dowód eksploracyjnego charakteru tego rodzaju działań. \par
+
+Przestrzeń, obok czasu, stanowi podstawowy wymiar analiz kultury. W badaniach nad polityką kulturalną podstawowym pytaniem jest: gdzie - w jakich miejscach, na jakich terytoriach, w jakich środowiskach (\textit{milieux}) - konkretna polityka jest realizowana. Przyjmujemy, że przestrzeń jest jedną ze zmiennych wyjaśniających, która określa różnice w kształcie tych polityk. Fundacja Obserwatorium Żywej Kultury - Sieć Badawcza od początku swojego działania zwracała uwagę na te różnice, uwzględniając w projektach i analizach wymiar przestrzenny. Wypracowanie na podstawie teorii żywej kultury \footnote{Barbara Fatyga, Żywa kultura, definicja autorska dla OŻK, (w:) Wieloźródłowy Słownik Kultury OŻK, 2013, \url{http://ozkultura.pl/wpisy/86}} własnego podejścia badawczego, skutkuje zainteresowaniem szerokim środowiskiem życia człowieka, grup społecznych i instytucji. Środowisko to, z jednej strony, kształtowane jest przez dynamiczne procesy; z drugiej zaś, samo te procesy kształtuje. Przestrzeni materialnej nadawany jest kształt przez praktyki kulturowe, które się w niej \textit{materializują}. Jeśli są one względnie trwałe, wówczas mogą manifestować się w formie konkretnej infrastruktury; gdy ich natura jest efemeryczna, śladem może pozostać tylko wydarzenie zapisane w pamięci uczestników. Dlatego też jednym z pierwszych założeń budowy systemu analitycznego „GIS Kultura” było skupienie się na względnie trwałych praktykach kulturowych, które skutkowały pojawieniem się materialnych wytworów w przestrzeni fizycznej. Z tego względu założyliśmy, iż \textbf{umieszczenie tych wytworów (obiektów) na mapie, pozwoli odpowiedzieć na pytania: gdzie materializują się praktyki kulturowe oraz w jaki sposób prezentują się przestrzenne wzory kultury.}\par
+
+Oprócz pytania analitycznego, dotyczącego wzorów kultury, pojawiło się \textbf{pytanie o dostępność zasobów dla konkretnych działań społecznych, a w szczególności działań z obszaru edukacji kulturalnej.} Związek między tymi pytaniami obrazowało, z kolei, założenie, że możliwe jest określenie zarówno nieoczywistych zasobów pomocnych, jak i stojących na przeszkodzie tejże edukacji. W projekcie „GIS Kultura” ważne było także \textbf{założenie o potrzebie wyjścia poza dwuwartościową kategorię wskazującą daną instytucję jako istniejącą bądź nieistniejącą \textit{(jest dom kultury/nie ma domu kultury)}.} Samo określenie liczby instytucji stanowi co najwyżej przyczynek do typologizacji obszarów przestrzennych, a z racji tego, że powszechnie wykorzystywane dane GUS agregowane są do poziomu gminy, można mówić tu o pewnego rodzaju typologizacjach gmin w Polsce, np. przez parametr infrastrukturalny.  \par
+
+Zdarza się, że na pytanie czy na terenie gminy jest dostępna biblioteka lub centrum kultury, odpowiada się, określając, czy obiekt ten znajduje się w granicach danej gminy, województwa.\footnote{Problematykę tę podjęto w publikacji Zespołu ds. Statystyki Kultury NCK w raporcie: Statystyka kultury w Polsce i Europie. Aktualne zagadnienia \url{ http://nck.pl/media/attachments/317207/Statystyka\%20kultury\%20raport_oWV5leL.pdf}, } Na tej podstawie trudno jest np. stwierdzić czy korzystają z niego tylko mieszkańcy danej gminy czy także gmin sąsiednich (usytuowanie takiego obiektu może być przecież korzystniejsze dla sąsiadów). Inną kwestią jest czy obiekt działa, jakiego rodzaju ofertę kulturalną posiada, czy jest dostosowany dla osób o specjalnych potrzebach (dla osób z niepełnosprawnością ruchową lub dla rodziców z dzieckiem). Chociaż część tych danych jest dostępna w BDL, to ze względu na tajemnicę statystyczną nie są one odpowiednio udostępniane. Np.: jeśli nawet w gminie istnieje więcej niż jeden obiekt określonego rodzaju to nie sposób dowiedzieć się, który z nich jest dostosowany dla osób z niepełnosprawnością, a który nie. Oprócz tego zdarzają się tutaj błędy mające różne przyczyny. Mogą być to błędy w sprawozdawczości, które popełniają osoby wypełniające formularze lub przygotowujące zestawienia. Przy tej skali przedsięwzięcia (2478 gmin opisywanych przez setki a nawet tysiące konkretnych danych) można więc mówić o pewnego rodzaju przybliżeniach, szacunkach, a nie o danych precyzyjnych. Z wielu powodów, których tu nie będę opisywał, trudno też oszacować skalę błędów.  \par
+ 
+Dla osób badających kulturę, dane GUS nie są wystarczające. Istnieje bowiem potrzeba bardziej precyzyjnych, w tym lepiej ukontekstowionych, informacji. Inna sprawa, że badacze sami rzadko starają się budować konteksty dla danych, którymi się zwyczajowo zajmują. Ponadto kultura sama w sobie jest trudna do zmierzenia, a w sytuacji, w której jedno z najprostszych narzędzi pomiarowych nie działa jak należy, dopracowywanie metodologii jest znacznie ograniczone. Dlatego też projekt „GIS Kultura” - zanim odpowie na pytanie, czy kultura jest dostępna - musi być zalążkiem alternatywnego systemu zbierania danych o kulturze. Projekt miał więc na celu stworzenie prototypowego narzędzia, które na podstawie jak najszerszych źródeł informacji, pozwoli na analizy stanu kultury w Polsce, poczynając od materialnego zaplecza – czyli infrastruktury. \par
+
+
+Dalsza część raportu jest sprawozdaniem ze wszystkich zrealizowanych w projekcie etapów prac. Są więc w nim części dotyczące: założeń operacyjnych, etapu gromadzenia i klasyfikacji danych wykorzystanych w zharmonizowanej bazie danych, etapu prac technologicznych wykonanych przez partnera projektu oraz przykłady zastosowań, które są możliwe do wykonania na prototypie narzędzia. .\par
+
+Efekt prac dostępny jest w trojaki sposób - w zależności od potrzeb potencjalnych użytkowników. Po pierwsze, jest to geoportal kultury dostępny pod adresem (\url{http://ozkultura.pl/node/30}); po drugie, serwis WFS dostępny pod adresem (\url{http://zks.gik.pw.edu.pl/ozk_portal_wfs/}) oraz po trzecie, zrzut bazy danych z ostatniego etapu prac, dystrybuowany na życzenie. \par
+
+\chapter{Badanie dostępności}
+
+\section*{Operacjonalizacja założeń i zasięgu systemu}
+Zbudowanie systemu analiz przestrzeni kulturalnej wymagało w pierwszym etapie określenia zakresu i „głębokości” zbierania danych. Kwestia zakresu wynika z teoretycznej koncepcji żywej kultury, zaś „głębokość” czy też szczegółowość zbieranych informacji o poszczególnych obiektach ma odpowiedzieć na pytanie: czy kultura jest dostępna? Warto tu zaznaczyć, że nie chodzi o wizję kultury pasywnej, wyłącznie odbieranej, dziejącej się tylko w pewnych typach instytucji. Poza tym, gdy mówi się o systemie kultury, można oczekiwać istnienia pewnego rodzaju homeostazy, w którym funkcje będą przenoszone między instytucjami społecznymi. Zmiana w takim rozumieniu jest częścią działań w obszarze rekonfiguracji systemu. To działania ludzkie, interakcje zorganizowane i nieformalne, sprawiają, że system ten ulega przekształceniom. By uchwycić dostępność kultury trzeba więc jak najszerzej zdefiniować miejsca, w których organizowana jest aktywność społeczna. Trzeba zarazem mieć na uwadze, że nie każdy obiekt infrastruktury żywej kultury pełni taką samą rolę w organizowaniu życia społecznego, część służy przede wszystkim realizacji potrzeb podstawowych, część odpowiada za kwestie związane z jakością życia jednostkowego, reszta - za wytwarzanie i podtrzymywanie więzi społecznych. Takie ujęcie pokazuje, że system wychodzi poza wąskie monitowanie \textbf{sektora kultury}, czy też badanie \textit{uczestnictwa w życiu kulturalnym}. Ponieważ zajmujemy się kulturowym wymiarem życia społecznego musieliśmy w pierwszym etapie określić instytucje towarzyszące człowiekowi, począwszy od jego narodzin, aż do śmierci. \par
+Z jednej strony, istnieje sprzeciw wobec tak szerokiemu ujmowaniu świata praktyk kulturowych, gdyż w potocznym rozumieniu kultura jest czymś odświętnym, spoza porządku dnia codziennego\footnote{Rafał Drozdowski, Barbara Fatyga, Mirosław Filiciak, Marek Krajewski, Tomasz Szlendak, Zakończenie, (w:) tychże, Praktyki kulturalne Polaków, Toruń, :Wyd. UMK, 2014, zob. też: \url{http://ozkultura.pl/sites/default/files/strona-archiwum/PRAKTYKI_KULTURALNE_POLAKÓW.pdf}}. W takim myśleniu o kulturze, ujawnia się pewna wewnętrzna sprzeczność. Sprzeczność tę można zobrazować na przykładzie bibliotek. Jest to typ instytucji utożsamiany z wąsko rozumianymi praktykami kulturowymi. Jeśli jednak biblioteka przynależy do tego typu obszaru, to czy jej funkcjonowanie nie powinno pokrywać się z tym, co jest odświętne, spoza dnia codziennego? W rzeczywistości jednak ile bibliotek w skali kraju prowadzi swoją działalność np. w niedzielę? Przy okazji pojawia się kolejne, empirycznie interesujące pytanie - ile kultury dostępnej jest od święta albo – nie przymierzając – w tzw. czasie wolnym? Wąskie myślenie o tym, czym jest kultura nie odpowiada temu, co się dzieje w rzeczywistości społecznej. Bo to właśnie praktyki kulturowe, polisemiczne, zmienne, nadają sens myśleniu o tym, czym w rzeczywistości kultura jest. W tym rozumieniu rozdzielanie sfer życia na kulturowe i pozakulturowe doprowadza do przyjęcia paradoksalnego założenia o istnieniu kultury uczestnictwa i nieuczestnictwa. Takie szerokie podejście można znaleźć w pracach choćby Antoniny Kłoskowskiej.\footnote{Antonina Kłoskowska, Kultura masowa. Krytyka i obrona, Warszawa: PWN, 1980, s.40}\par
+%16:15 26luty
+W naszych badaniach kultury szeroki zakres ujmowanych zjawisk przypomina też o złożoności systemu społecznego i relacjach między jego elementami. Świat społeczny zwykle rekonstruowany jest poprzez poszczególne fragmenty, empirycznie uchwytne. Natomiast dopiero zrozumienie relacji między nimi pozwala na skuteczne projektowanie działań. \par
+Tworzenie narzędzi w ramach systemu „GIS Kultura” poprzedzały założenia o niedyskryminowaniu żadnych źródeł informacji o obiektach zakwalifikowanych przez nas jako obiekty kultury. Celem było zebranie danych o tych obiektach żywej kultury, definiowanych w szeroki sposób i późniejsze sklasyfikowanie ich ze względu na funkcję kulturową jaką pełnią. W tym sensie każdy obiekt na mapie jest obiektem kultury, każdy też wyposażony jest w bogate sieci aksjosemiotyczne (wartości i znaczenia). \par
+
+
+Prace nad metodologią klasyfikacji obiektów rozpoczęły się przed realizacją właściwego projektu „GIS Kultura”, w 2013 roku. Wówczas to, na bazie inwentarza obiektów zebranych ze stron internetowych gmin, zostało stworzonych 28 typów obiektów infrastruktury.\footnote{O tym etapie więcej w Aneksie 1 i 2 do niniejszego raportu. } W trakcie gromadzenia danych do typologii tej został dodany 29 typ, czyli infrastruktura transportowa. W celu ujednoznacznienia typów zostały doprecyzowane ich nazwy, ale zasadniczy sposób klasyfikacji nie uległ zmianie. Dodatkowo, w trakcie prac nad interfejsem przedstawiania danych, zostały stworzone kategorie grupujące te obiekty. Wynikają one z założenia o funkcjonalności kultury wobec życia społecznego, co tu znaczy tyle, iż każda instytucja pełni określoną społecznie rolę. Można rzec, że kultura jako system pełni funkcję regulatywną dla wszystkich wymiarów i poziomów ludzkiego życia: od biologicznego po społeczny. Zinwentaryzowane przez nas obiekty zostały pogrupowane w indeksy właśnie ze względu na bardziej szczegółowe funkcje: regulujące potrzeby podstawowe, regulujące jakość życia, regulujące więzi społeczne. Listę 29 typów i przynależności do jednego z trzech typów regulujących przedstawia Tabela \ref{table:1}. \par
+\begin{table}[p!]
+\centering
+\caption{Lista indeksów obiektów żywej kultury.}
+\label{table:1}
+\scalebox{0.9} {
+\begin{tabular}{|l|l|l|}
+\hline
+	Nr &
+Nazwa  indeksu infrastruktury &
+Funkcja regulująca
+\\
+\hline\hline
+	1 &
+Edukacji i nauki &
+jakości życia
+\\
+\hline
+	2 &
+Zbiorowych spotkań okazjonalnych &
+więzi społecznych
+\\
+\hline
+3 &
+	Kultury "wysokiej" &
+jakości życia
+\\
+\hline
+4 &
+	Upowszechniania kultury &
+jakości życia
+\\
+\hline
+	5 & Aktywności fizycznej &
+potrzeb podstawowych
+\\
+\hline
+6 &
+	Kultury religijnej &
+jakości życia
+\\
+\hline
+7 &
+	Gastronomii &
+potrzeb podstawowych
+\\
+\hline
+	8 & Turystyki &
+jakości życia
+
+	\\
+\hline
+9 &
+Handlowa &
+potrzeb podstawowych
+\\
+\hline
+	10 &
+	Produkcji i dystrybucji informacji &
+jakości życia
+\\
+\hline
+	11 & Usług kulturalnych &
+jakości życia
+\\
+\hline
+	12 &
+	Oswojonej natury & potrzeb podstawowych
+\\
+\hline
+13 &
+Upiększania/dbania o ciało & jakości życia
+\\
+\hline
+	14 & Magii/medycyny para- i niekonwencjonalnej &
+jakości życia
+\\
+\hline
+	15 & Organizcji życia zbiorowego & więzi społecznych
+\\
+\hline
+	16 & Zdrowia &
+potrzeb podstawowych
+\\
+\hline
+	17 & Rzemiosła i kultury ludowej &
+jakości życia
+\\
+\hline
+	18 & Instytucji finansowych & więzi społecznych
+\\
+\hline
+	19 & Handlu kulturą & jakości życia
+\\
+\hline
+	20 & Przemysłów kultury & jakości życia
+\\
+\hline
+	21 & Nieformalna/subkulturowa &
+więzi społecznych
+\\
+\hline
+	22 & Administrowania kulturą & więzi społecznych
+\\
+\hline
+	23 & Informacyjno-promocyjna & jakości życia
+\\
+\hline
+	24 & 
+Obsługi społecznego funkcjonowania jednostek i grup &
+potrzeb podstawowych
+\\
+\hline
+	25 & NGO's & więzi społecznych\\
+\hline
+	26 &
+Infrastruktura pomocy społecznej & więzi społecznych
+\\
+\hline
+	27 & Produkcyjna & potrzeb podstawowych
+\\
+\hline
+	28 & Usług produkcyjnych & potrzeb podstawowych\\
+\hline
+	29 & Transportowa & regulacji jakości życia\\
+\hline
+\end{tabular}
+}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne, na podstawie tekstów metodologicznych Barbary Fatygi, Elizy Gryszko i Aleksandry Orkan-Łęckiej dostępnych pod adresami: \url{http://ozkultura.pl/node/1650}; \url{http://ozkultura.pl/node/1800}; \url{http://ozkultura.pl/node/955}.}
+\end{table}
+
+Zorganizowany system klasyfikacji informacji o żywej kulturze mierzy się także z problematyką badania dostępności. Dostępność stanowi jedno z zagadnień, które w sensie empirycznym jest poruszane w różnych dziedzinach nauki: pojawia się ono zarówno w geografii społecznej, ekonomii, jak i w socjologii i antropologii. W projekcie „GIS Kultura” kategoria ta zdefiniowana została jako \textbf{możliwość zaistnienia relacji między więcej niż jednym elementem zbioru}. Jest to definicja bardzo ogólna i jak na humanistyczne gusta - minimalistyczna, ale warto zaznaczyć, że wyraźnie odcina się od mierzenia realnych relacji między elementami zbioru. Dostępność transportowa, czy węziej - komunikacyjna, w tym rozumieniu będzie określała relacje między domem kultury a odległością do najbliższego przystanku komunikacji publicznej, nie zaś liczbę osób korzystających z transportu publicznego w celu dotarcia do domu kultury. Aby móc odpowiedzieć na pytanie o dostępność sformułowane ze wskazanego punktu widzenia należałoby zbudować całkowicie nowy system zbierania danych, wystandaryzowany pod kątem wielu różnych podmiotów. W tym sensie projekt „GIS Kultura” pozwala na badanie dostępności, nie zaś „ruchliwości”, czyli faktycznego przemieszczania się ludzi.\footnote{Zbigniew Taylor, Przestrzenna dostępność miejsc zatrudnienia, kształcenia i usług a codzienna ruchliwość ludności wiejskiej,(w:) „Prace Geograficzne IGiPZ PAN”, nr 171, Wrocław: Wyd. Continuo, 1999, s. 239. } Budowa sytemu stała się okazją, żeby wyjść poza badanie dostępności przestrzennej, czyli relacji określających odległości między obiektami bądź to w linii prostej, bądź wg istniejącej siatki ulic i ścieżek pieszych. System został zaprojektowany w taki sposób, żeby zbierać informacje także o dostępności informacyjnej, dostępności dla grup osób o specjalnych potrzebach czy wielkości obiektu ze względu na pełnioną funkcję - np. w teatrach byłaby to liczba miejsc siedzących na sali. Warto cały czas pamiętać, że \textit{gros} tych danych jest zbieranych w ramach sprawozdawczości GUS i jeśli tylko zmieniłby się status tych informacji w ramach statystyk publicznych (albo – nomen omen - sposób ich udostępniania), mogłyby być one zintegrowane w ramach tego systemu.  \par
+
+Wymienione powyżej wymiary dostępności mają być elementami równania, które w konsekwencji odpowie na pytanie - jaka jest dostępność kultury. W słowniku portalu ozkultura.pl „dostęp/dostępność kultury” została zdefiniowana następująco: „dostęp/dostępność kultury to: a) na poziomie jednostki - możliwy do zmierzenia, (chociaż nie jest to łatwe), zakres wykorzystania przez nią zasobu kulturowego, pozostającego w dyspozycji grup i społeczności, których jednostka ta jest członkiem; b) na poziomie grupy oznacza - także mierzalne i także niełatwo - wykorzystanie zasobu kulturowego będącego w zasięgu jej możliwości i potrzeb. Dostęp do kultury uwarunkowany jest wieloma czynnikami: biologicznymi (np.: indywidualnymi cechami fizycznymi, niepełnosprawnością, itd.), demograficznymi (np.: takimi jak wiek, płeć), społecznymi (np.: przynależnością do warstwy społecznej, pełnionymi rolami zawodowymi), geograficznymi (np.: zróżnicowaniami terytorialnymi, miejscem zamieszkania), ekonomicznymi (np.: poziomem dochodów), kulturowymi (np.: wykształceniem, poziomem kompetencji kulturowych) oraz emocjonalnymi. Z drugiej strony - należy pamiętać, że wszystkie wymienione czynniki mogą wpływać na fakt, iż jednostki lub grupy będą wykorzystywały dostęp do kultury w sposób selektywny: kierując się własnymi potrzebami kulturalnymi, upodobaniami, nawykami, względami towarzyskimi czy nawet nastrojem w danej chwili. (W ten sposób tworzą one wszak własne wersje subkulturowe, kultury rozumianej całościowo i/lub oficjalnie). O tym fakcie często zapominają twórcy oferty kulturalnej, zwłaszcza ci, którzy uważają, że to, co dają odbiorcom musi być skonsumowane”.\footnote{ Barbara Fatyga, Dostępność kultury, definicja autorska dla OŻK-SB,(w:) Wieloźródłowy Słownik Kultury OŻK, 2013, \url{http://ozkultura.pl/wpisy/113}} Wymienione tutaj elementy różnicujące korzystanie z oferty instytucji, zarówno na poziomie jednostkowym, jak i grupowym, dla potrzeb opisywanego projektu muszą zostać przesunięte z obszaru kapitału kulturowego pozostającego w dyspozycji jednostek i grup, na poziom zasobu będącego w dyspozycji instytucji. Zamiast więc badać:\textit{ w jakim stopniu osoby z niepełnosprawnością ruchową korzystają z oferty instytucjonalnej, chcieliśmy najpierw określić: czy sama instytucja stwarza takim osobom warunki dla korzystania ze swojej oferty.} Analogicznie - dostępność informacyjna więcej mówi o istnieniu kanałów komunikacyjnych (adresie email, stronie www, profilu w serwisie społecznościowym), niż o liczbie maili wysłanych do instytucji, o liczbie wejść na jej stronę, czy liczbie osób śledzących/lubiących dany profil w serwisie społecznościowym. Dostępność miejsc siedzących na sali także nie odnosi się do wypełnienia tej sali przez widownię w trakcie organizowanych wydarzeń. Dopiero zebranie wiedzy o istniejącym zasobie i poziomie jego wykorzystywania. może przyczynić się do sformułowania przynajmniej wstępnych wniosków o stanie kultury na danym terenie. System „GIS Kultura” ma za zadanie określić ten zasób, co w dalszej kolejności ma ułatwić zbieranie informacji o korzystaniu z kultury i stworzyć jeden z ważnych kontekstów dla innych badań; w tym uczestnictwa. Aby osiągnąć ten cel należałoby stworzyć system zbierający informacje również o ofercie kulturalnej, w takim samym zakresie jak zostały zebrane i są zbierane informacje o zasobach infrastrukturalnych. Niemniej jednak budowa takiego systemu musiałby uwzględniać także inny sposób myślenia o kulturze, w którym praktyki kulturalne realizowane nie tylko przez sformalizowane struktury. System musiałby mieć też możliwość uchwycenia działań nieformalnych, spontanicznych, jednorazowych. Badanie istniejącej infrastruktury żywej kultury jest więc częścią szeroko zakrojonego projektu badawczego, który nazwaliśmy „Mapą wiedzy i niewiedzy o polskiej kulturze”.\footnote{Autorką samej nazwy jest członkini Zespołu Węzła Centralnego FOŻK-SB - dr hab. Magdalena Dudkiewicz.} W kolejnym rozdziale zostało opisane, jakiego typu informacje zostały wykorzystane w projekcie „GIS Kultura”, wraz z ich oceną jakościową. \par
+
+\chapter{Dane wejściowe}
+
+Opis modelu systemu informacji przestrzennej o infrastrukturze kultury można przedstawić w formie czteroelementowego schematu. Zostały w nim uwzględnione źródła danych, narzędzia do przetwarzania i przechowywania danych (osobno) oraz proces analizy. Proces ten prezentuje Rysunek \ref{figure:1}.Jego elementy są obowiązujące dla każdego projektu badawczego, w którym na dużą skalę przetwarzane są dane czy to liczbowe, czy tekstowe. Rozdział ten dotyczy etapu pozyskiwania danych i prezentuje także pewne podstawowe informacje charakteryzujące główne źródła danych. \par
+
+\begin{figure}[h]
+\caption{Schemat procesu projektowego GIS Kultura}
+\centerline{\includegraphics[width=16cm, height=4cm]{/home/mariusz/Obrazy/giskulturaraport/schemat1.png}}
+%\centering
+\label{figure:1}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure}
+
+Pierwotnym założeniem projektu było skupienie się na zebraniu szerokich informacji o obiektach w województwach mazowieckim i warmińsko-mazurskim, oraz w ograniczonym stopniu (do poziomu jednego indeksu żywej kultury) zgromadzenie informacji z całego kraju. W tym celu podjęto próbę stworzenia crawlera \footnote{Program zbierający informacje o strukturze, stronach i treściach znajdujących się w internecie, źródło: \url{https://pl.wikipedia.org/wiki/Robot_internetowy}}, który używany przez korespondentów lokalnych pozwalałaby zbierać informację o infrastrukturze. Równolegle zostały podjęte próby zebrania danych z serwisów agregujących szeroki zakres informacji adresowych oraz z Bazy Danych o Obiektach Topograficznych 10k (BDOT10k). Rozważano zatem trzy kierunki podjęcia działań dotyczących pozyskania informacji. Pierwszy miał na celu zebranie podstawowej informacji ze stron jednostek samorządu terytorialnego. Drugi miał na celu zebranie i przekategoryzowanie danych zgromadzonych przez komercyjne serwisy internetowe. Trzeci natomiast – miał prowadzić do pozyskania dostępu do danych publicznych. \par
+
+Problem z pierwszym rozwiązaniem uwidocznił się na etapie projektowania crawlera. Wynikał on z braku standaryzacji informacji umieszczanej na stronach gminnych. W wielu przypadkach strony Biuletynu Informacji Publicznej (BIP) prezentowały niewielki wycinek informacji w stosunku do tego, co znajdowało się na stronach gminnych. Strony BIP mają jednolitą strukturę organizowania informacji, zaś strony gminne są tworzone w różnorodnych technologiach. To, z kolei, uniemożliwiało ekstrakcję ustrukturyzowanych informacji. Testowane strony gminne były przygotowywane w różnych standardach i dodatkowo część posiadała zabezpieczenia przed \textit{crawlingiem}. Przy zakładanej pierwotnie w projekcie liczbie gmin do zbadania (413 gmin oraz dodatkowo powiatów i witryn wojewódzkich), należałoby zbudować podobną liczbę \textit{crawlerów}. Zbudowany prototyp narzędzia nie sprawdził się w pozyskiwaniu informacji na taką skalę\footnote{ Narzędzie to przydało się natomiast do pilotażu projektu, w tym do pierwszej inwentaryzacji danych, koniecznej przed etapem tworzenia indeksów infrastruktury.}. Interfejs \textit{crawlera} prezentuje Rysunek \ref{figure:2}. \par
+Przy tak zarysowanym problemie badawczym, czyli zebraniu szerokiego typu informacji o obiektach, problem techniczny przerodził się w problem budowy wyszukiwarki internetowej oraz systemu klasyfikacji obiektów. Tak zbudowany automatyczny system wyszukiwania dla każdego obiektu powinien precyzyjnie gromadzić informację o 1) nazwie, 2) funkcji, dzięki której możliwe byłoby przyporządkowanie obiektowi indeksu żywej kultury i 3) lokalizacji, adresie, z nazwą ulicy i numerem budynku, ale także z jednoznaczną nazwą miejscowości. Droga ta została porzucona jako zbyt koszto- i czasochłonna. Jednak w przyszłości do tego typu zadań pomocne mogą być rozwiązania z zakresu machine learning\footnote{Uczenie maszynowe - Machine learning albo samouczenie się maszyn, systemy uczące się (ang. machine learning) – dziedzina wchodząca w skład nauk zajmujących się problematyką SI (patrz sztuczna inteligencja). Jest to nauka interdyscyplinarna ze szczególnym uwzględnieniem takich dziedzin jak informatyka, robotyka i statystyka. Głównym celem jest praktyczne zastosowanie dokonań w dziedzinie sztucznej inteligencji do stworzenia automatycznego systemu potrafiącego doskonalić się przy pomocy zgromadzonego doświadczenia (czyli danych) i nabywania na tej podstawie nowej wiedzy. Uczenie maszynowe jest konsekwencją rozwoju idei sztucznej inteligencji i metod jej wdrażania praktycznego. źródło:\url{ https://pl.wikipedia.org/wiki/Uczenie_maszynowe}}. Technologie te stają się z dnia na dzień coraz bardziej dostępne.\par
+\begin{figure}[h]
+\caption{Okno crawlera.}
+\centerline{\includegraphics[width=15cm, height=9.5cm]{/home/mariusz/Obrazy/giskulturaraport/obraz1.png}}
+%\centering
+\label{figure:2}
+\raggedbottom{Źródło: Michał Kaszlej, twórca crawlera}
+\end{figure}
+
+Problem z drugim rozwiązaniem, czyli z zebraniem i przekategoryzowaniem danych zgromadzonych przez komercyjne serwisy internetowe, miał charakter nie tyle technologiczny, ile prawny i dotyczył możliwości przetwarzania takich informacji. Koszty zdobycia praw do zgromadzonych danych przekraczały środki przeznaczone w projekcie na pozyskanie informacji. Rozważane były dwa źródła informacji: dane zebrane i udostępnione w serwisie Google Maps oraz dane Panoramy Firm. Nieprecyzyjny status danych, sposób ich zbierania przez te serwisy, z trudną do określenia perspektywą aktualizacji wyeliminował to rozwiązanie, jako bazowe pod kątem budowanego systemu. 
+ \par
+Jednocześnie, wraz z zespołem prof. Roberta Olszewskiego z Wydziału Geodezji i Kartografii Politechniki Warszawskiej, od samego początku podjęliśmy działania zmierzające do wykorzystania danych zharmonizowanych w Bazie Danych o Obiektach Topograficznych 10k (BDOT10k), wypracowanej w ramach dyrektywy UE - Inspire. Otrzymanie tej bazy dla celów naukowych okazało się jednak niemożliwe. W odpowiedzi na skierowane do Głównego Geodety Kraju pismo, w którym prof. Olszewski zwracał się o dostęp do bazy, otrzymaliśmy negatywną odpowiedź sformułowaną przez prawnika. Tę niekorzystną dla nas decyzję argumentowano następująco:\textit{ dla dysponentów bazy nie jest jasne, czy prof. PW Robert Olszewski zwracał się o jej udostępnienie w imieniu własnym (jako Robert Olszewski), czy też jako przedstawiciel świata nauki (prof. Politechniki Warszawskiej)}. Realizowanie projektu w ramach programu MKiDN okazało się niewystarczającym powodem. Jednocześnie środki przeznaczone na projekt, nie pozwalały na zakup tej bazy. W efekcie okazało się, że baza BDOT10k jest tylko teoretycznie bazą publiczną, a dostęp do niej jest ograniczany na wiele różnych sposobów.  \par
+
+\textit{Faktycznym} sercem „GIS Kultury” stały się dwa źródła danych, zbierające różne informacje. Oba o zasięgu ogólnokrajowym. Pierwsze to serwis openstreetmap.org (OSM), drugim zaś - dane o działalności gospodarczej zgromadzone w Krajowym Rejestrze Sądowym (KRS). Dodatkowo informacje te są na bieżąco poszerzane o inne źródła. Spis źródeł danych prezentuje  Rysunek \ref{figure:24}. \par
+
+\begin{figure}[p]
+\caption{Źródła danych w projekcie GIS Kultura}
+\centerline{\includegraphics[width=16cm, height=12cm]{/home/mariusz/Obrazy/giskulturaraport/schemat2.png}}
+%\centering
+\label{figure:24}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure}
+
+Dane o działalności gospodarczej gromadzi także baza Centralnej Ewidencji i Informacja o Działalności Gospodarczej. Została ona przez nas pozyskana, lecz - jak się okazało- nie spełnia zasady komplementarności danych. Znajdują się w niej informacje głównie o nazwie i adresie, pod którym zarejestrowano działalność. Brakuje natomiast możliwości pozyskania informacji o charakterze prowadzonej działalności. \par
+
+% 16:56 26 luty
+
+Podstawowy problem z przełożeniem danych projektu OSM na kategoryzację obiektów żywej kultury wynika ze sposobu organizacji zasobów w dwóch projektach. OSM bazuje na tagach przypisywanych do obiektu przestrzennego, którym może być punkt, linia, powierzchnia czy też relacja przestrzenna. Złożoność problemu można zaprezentować na przykładzie lasu. Może być on punktem, czyli informacją przybliżoną, lub też może być przedstawiony jako pełna informacja o jego granicach (wówczas będzie to powierzchnia). Ścieżki w lesie będą liniami; jeśli las stanowi część rezerwatu, taka informacja będzie zapisana w formie relacji przestrzennej. Formuła tagów w projekcie OSM jest organizowana przy pomocy dość swobodnie określanych relacji klucz → wartość (\textit{key → value}). Z jednej strony, lista kluczy i wartości jest negocjowana w drodze konsensusu społeczności mapującej; z drugiej jednak, sam proces wpisywania angażuje rzesze użytkowników.\footnote{Liczba osób, które kiedykolwiek dodały jakiś element do map szacowna jest na 800000 tys.(stan na 10.2016) źródło \url{ http://wiki.openstreetmap.org/wiki/Stats\#Database_statistics_-_Graphical_charts_.28since_2005.29} } W konsekwencji można wyróżnić obszerną listę możliwych błędów charakterystycznych dla projektów społecznościowych, nie wspominając już o aktach wandalizmu, które wpływają na zmianę stanu infrastruktury. Z punktu widzenia tworzenia systemu „GIS Kultura” szczególnie dwa typy błędów stanowiły wyzwanie przy projektowaniu systemu pobierania danych. Pierwszy typ to błędy wynikające ze złego przypisania kategorii do obiektu, nieodzwierciedlające jego rzeczywistej funkcji. Może być to, po prostu, brak odpowiedniej wartości (\textit{value}), mimo właściwej klasyfikacji w kluczu (\textit{key}). Skutkiem tego stanu rzeczy jest często nadużywanie kategorii inne (\textit{other, unknown}). Drugi typ to błędy pojawiające się w trakcie wprowadzania danych przez użytkowników do systemu, czyli błędy \textit{drukarskie}. Biorąc pod uwagę te dwa typy błędów, należało zbudować taki mechanizm wydobywania danych z bazy OSM, który pozwala precyzyjnie przekształcać dane z systemu opartego o tagi (OSM) na system oparty o jednorodne przyporządkowanie obiektu do klasy („GIS Kultura”). Należało uwzględnić także nieprecyzyjny charakter danych. Budowa narzędzia zaczęła się od stworzenia \textbf{pliku słownika}, w którym 713 najczęściej używanych \textbf{tagów} służących do opisywania obiektów zostało przyporządkowanych do jednego z \textbf{29 typów indeksów żywej kultury}. Dodatkowo został użyty \textbf{kod określający obiekty niezidentyfikowane}. Plik słownika został przygotowany na tyle szeroko, że znajdują się w nim także nazwy geograficzne miejscowości, osad i przysiółków. Informacje te mogą być pomocne przy generowaniu mapy zasadniczej. Schemat pracy z danymi o punktach z bazy OSM przedstawia Rysunek \ref{figure:3}.\par
+\begin{figure}[h]
+\caption{Schemat przetwarzania danych z projektu openstreetmap.}
+\centerline{\includegraphics[width=16cm, height=8cm]{/home/mariusz/Obrazy/giskulturaraport/schemat3.png}}
+%\centering
+\label{figure:3}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure} \par
+
+Dane z serwisu OSM pobierane są za pośrednictwem strony Geofabrik\footnote{\url{http://download.geofabrik.de/europe/poland.html}}, która codziennie udostępnia plik zbiorczy projektu, „przycięty” dla różnych obszarów geograficznych. Warto zauważyć, że dane znajdujące się na stronie z mapą openstreetmap.org, to tylko część danych zbieranych w projekcie. Dane służące renderowaniu\footnote{ Przekształcanie danych geoinformatycznych w mapę obrazkową.} mapy mają mniejszy zakres niż te pobrane np. ze strony Geofabrik. Plik dystrybuowany jest w formacie pbf, który posiada strukturę podobną do schematu xml, ale jest o 30\% mniejszy.\footnote{ \url{http://wiki.openstreetmap.org/wiki/PBF_Format}} Format ten wymaga zastosowania narzędzi parsujacych\footnote{Parser lub Analizator składniowy umożliwia przetworzenie tekstu czytelnego dla człowieka w strukturę danych przydatną dla oprogramowania komputera. źródło:\url{https://pl.wikipedia.org/wiki/Analizator\_składniowy}}, które wyodrębnią tylko część informacji zgodnie z intencją zastosowania ich w projekcie GIS Kultura. W celu parsowania pliku został wykorzystany program dystrybuowany na licencji GPL - OsmPoisPbf \footnote{\url{https://github.com/MorbZ/OsmPoisPbf}}
+ Plik wynikowy zmodyfikowano przez użycie specjalnie dopasowanego pliku filter.txt - wyodrębniającego specyficzne klucze i wartości.\footnote{Aneks 3} Ostateczny wynik, czyli dane o punktach z dodatkową informacją o dostępności, został wygenerowany przez użycie komendy i dodatkowych parametrów, które wyodrębniały dane o dostępności dla wózków inwalidzkich \textit{(wheelchair)}, posiadanej strony internetowej \textit{(url, website)}, godzin otwarcia \textit{(opening\_hours)}.  
+W efekcie otrzymywano plik w formacie .csv, który posiada następującą strukturę: dane o nazwie, długości i szerokości geograficznej, kod identyfikacji typy obiektu, dane o dostępności dla osób z niepełnosprawnością, dostępności informacyjnej i dostępności wg godzin otwarcia. Tak spreparowane dane są gotowe do przechowania w bazie Postgresql.\footnote{Wolno dostępny system zarządzania relacyjnymi bazami danych źródło: \url{https://pl.wikipedia.org/wiki/PostgreSQL}} \par
+
+Krajowy Rejestr Sądowy jest informatyczną bazą danych, w której znajdują się informacje o trzech typach podmiotów: 1) przedsiębiorstwach, 2) stowarzyszeniach, innych organizacjach społecznych i zawodowych, fundacjach, 3) oraz publicznych zakładach opieki zdrowotnej. Baza danych gromadzi także informacje o dłużnikach niewypłacalnych. Natomiast Centralna Ewidencja i Informacja o Działalności Gospodarczej zbiera dane o przedsiębiorcach będących osobami fizycznymi. Te dwie bazy stanowią największe źródło danych o oficjalnym życiu gospodarczym i społecznym w kraju. Każdy z podmiotów określa zakres działalności wg schematu Polskiej Klasyfikacji Działalności (PKD). W czasie prowadzenia prac gromadzących dane, podmioty klasyfikowane były wg schematu z roku 2007 (PKD-2007), natomiast w bazie znajdywały się podmioty, które posiadały klasyfikację z wcześniejszego okresu - z roku 2004. Pełną informację o schemacie PKD prezentuje dokument wyjaśniający, znajdujący się na stronie GUS.\footnote{\url{http://stat.gov.pl/Klasyfikacje/doc/pkd_07/pdf/3_PKD-2007-wyjasnienia.pdf}} Za aktualność danych w KRS i CEIDG odpowiada podmiot składający wniosek, przedsiębiorca, stowarzyszenie. Na nim też ciąży odpowiedzialność za aktualizację danych, np. aktualizację PKD, niemniej jednak za niedopełnienie tego obowiązku nie są przewidziane żadne sankcje. Może to wyjaśniać, dlaczego dane te są nieprecyzyjne, szczególnie w przypadku bazy CEIDG. \par
+
+W przypadku opisanych powyżej źródeł danych pojawiły się trzy trudności. Pierwsza jest związana z ekstrakcją tych danych ze stron KRS i CEIDG. Nie ma możliwości pobrania ich w formie ustrukturyzowanego pliku, każdy rekord należy pobrać osobno. Dane udostępniane są w formie pliku pdf, z informacjami tylko o jednym rekordzie. Drugi problem jest związany z potrzebą przypisania współrzędnych do danych adresowych. W ramach prac projektowych zadanie to zostało wykonane przez Fundację ePaństwo, która pobrała i przypisała współrzędne do danych. Wreszcie, kolejnym zagadnieniem było określenie typu działalności wg Polskiej Klasyfikacji Działalności i przełożenie jej na indeksy obiektów żywej kultury. W tym celu ponownie został przygotowany plik słownikowy klasyfikujący działalność PKD pod kątem indeksów obiektów żywej kultury. W tym przypadku także została wykonana specjalna procedura \textit{translacyjna} - przypisywania kodu OŻK dla poszczególnych podmiotów. Znaczna część rekordów w KRS (także w CEIDG) posiadała wiele różnych kodów działalności. Zastosowaliśmy procedurę przypisywania rang wg działalności ze względu na częstotliwość używania pewnych kodów przynależących do obiektów żywej kultury.\footnote{Aneks 4 – Algorytm P. Michalski.} Dodatkowo ujawnił się problem z przypisaniem indeksów dla obiektów, które mają określoną pozycję PKD 96.09 -\textit{ Pozostała działalność usługowa, gdzie indziej niesklasyfikowana}. Można domniemywać, że będą tam obiekty należące do indeksu magii/medycyny para- i niekonwencjonalnej. Wnioski z analizy danych KRS i CEIDG pozwoliły zauważyć, że kategorie PKD są szczegółowe w przypadku różnorodnych form przemysłu i rolnictwa, natomiast w przypadku działalności usługowej są bardziej ogólne. Działalność kulturalna, a szczególnie animacyjna realizowana poza tradycyjnymi instytucjami kultury, w obecnej formule informacji o gospodarce jest pomijana.  \par
+
+W trakcie prac nad projektem zmieniał się status dostępności danych publicznych. Szczególnie dotyczy to zasobów Centralnego Ośrodka Dokumentacji Geodezyjnej i Kartograficznej (CODGiK). Nieodpłatnie w ramach usługi PRG dystrybuowane są pliki z geometriami granic administracyjnych (plik z rozszerzeniami .shp)\footnote{\url{http://codgik.gov.pl/index.php/darmowe-dane/prg.html}} oraz dane z Bazy Danych Obiektów Ogólnogeograficznych (BDOO) (udostępniane jako pliki .gml)\footnote{\url{http://codgik.gov.pl/index.php/darmowe-dane/bdo250gis.html}}. Niemniej jednak z punktu widzenia projektu GIS Kultura jakość udostępnianych danych publicznych nie okazała się zadawalająca. Udostępnione w 2015 roku dane z obrysami gmin, które mają pozwalać na badanie relacji w ramach administracji samorządowej, posiadały nieaktualne dane z kodem identyfikacji TERC w ramach systemu TERYT. Dane te należało ręcznie poprawić do stanu faktycznego na rok 2015.\footnote{W styczniu 2017 roku na stronie pojawiły się jednak nowe, zaktualizowane pliki z granicami administracyjnymi}. \par
+W ramach prac nad systemem analitycznym w projekcie pojawiła się także potrzeba weryfikacji hipotez historycznych. Często formułowaną hipotezą dotyczącą nierównomiernego rozwoju kraju jest odnoszenie się do historii jego obecnych obszarów (granice rozbiorów, historia tzw. ziem odzyskanych). W celu weryfikacji tych hipotez, przygotowaliśmy odpowiednie bazy. Jednostkom samorządu terytorialnego została przypisana klasyfikacja historyczna, zgodnie z typem: teren gminy znajdował się w zaborze rosyjskim, pruskim, austriackim bądź na obszarze przyłączonym do terytorium RP po 1945 roku. Zestawione dane prezentuje Rysunek \ref{figure:4}. Podstawą do przygotowania danych były poprawione dane o gminy z CODGiK. \par
+\begin{figure}[h]
+\caption{Gminy wg typu historycznego (stan na 1.01.2016).}
+\centerline{\includegraphics[width=16cm, height=12cm]{/home/mariusz/Obrazy/giskulturaraport/mapa1a.png}}
+%\centering
+\label{figure:4}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure} \par
+%18:02 26 lutego
+
+Aby w ramach projektu „GIS Kultura” możliwe było badanie dostępności w wymiarze społecznym, bazy danych przestrzennych powinny być zasilane danymi o charakterze socjodemograficznym. Minimalnym wymaganiem wobec takich analiz są dane o rozmieszczeniu ludności. Niestety, precyzyjne i satysfakcjonujące dane nie są ogólnodostępne. W celu zasilenia systemu zostały wykorzystane ostatnie dane ze spisu ludności (NSP 2011), które upubliczniono na poziomie obwodów spisowych i przełożono do prezentacji na siatce o boku 1 km.\footnote{\url{https://geo.stat.gov.pl/start/-/asset_publisher/jNfJiIujcyRp/content/id/36734}} Wątpliwości, co do jakości danych wynikają z tego, że odzwierciedlają on stan sprzed 6 lat. Dodatkowo procedura ostatniego Narodowego Spisu Powszechnego to raczej duże badanie społeczne, niż spis powszechny w typowej dla niego formie.\footnote{Przykładowe uwagi, ze względu na sposób dostępu do samospisu drogą elektroniczną znajdują się artykule \url{http://www.niepelnosprawni.pl/ledge/x/86254}}\par
+
+Sytuacja z danymi publicznymi, którym można przypisać aspekt geograficzny, z każdym rokiem ulega zmianie. Upubliczniane są nowe zbiory danych. Dzieje się to na poziomie centralnym i lokalnym. Niektóre gminy prezentują zestawienia tych danych w formie geoportali tematycznych. Bardzo rozbudowane serwisy tego typu mają Warszawa, Gdańsk, Kraków, Wrocław. Często, dane z poziomu gmin prezentowane są w formie surowej informacji, do której można mieć dostęp za pomocą interfejsów programistycznych (API). Jednak w trakcie prac nad projektem, to właśnie zdobywanie danych wymuszało najbardziej dynamiczne reagowanie na zmiany związane z podejściem do publikacji informacji. Gdy nasza Fundacja rozpoczynała projekt, szeroki dostęp do informacji publicznej był w powijakach. Mimo tego, że świadomość wagi tych informacji się zwiększyła, rzeczywiste podejście do problemu dostępności danych publicznych jest ciągle bardzo różnie interpretowane przez instytucje publiczne. Do pozytywnych zjawisk należą takie inicjatywy jak danepubliczne.gov.pl, portal Ministerstwa Cyfryzacji, który gromadzi dokumenty z różnych organów. Jest to właściwy kierunek działań, niemniej jednak można mieć wiele zastrzeżeń do funkcjonalności portalu z punktu widzenia jego potencjalnych użytkowników. Na stronie \url{https://danepubliczne.gov.pl/group/spoleczenstwo} widnieje 7 formatów danych, w których można pobrać informacje, z czego najpopularniejszym jest format pdf (brak w nim definicji schematu publikacji danych), drugim jest xls (format zamknięty i wykorzystywany przez oprogramowanie MS Office), trzecim jest format zip, czyli skompresowane archiwum, w którym może kryć się każdy rodzaj pliku. Format csv, który można uznać za minimalny względem publikacji danych jest użyty tylko raz. Są to dane syntetyczne o liczbie zameldowanych osób we Wrocławiu\footnote{\url{https://danepubliczne.gov.pl/group/spoleczenstwo?res_format=CSV}} \par
+Nie tylko administracja publiczna zbiera i udostępnia dane o życiu społecznym. W projekcie „GIS Kultura” jako dodatkową warstwę referencyjną wykorzystane zostały dane z projektu otwartezabytki.pl prowadzonego przez Centrum Cyfrowe Projekt: Polska. Dane w projekcie mają dwojaki charakter, główną częścią są dane o zabytkach zbierane przez Narodowy Instytut Dziedzictwa, reszta - to dane zbierane przez społeczność, która wytworzyła się przy projekcie. Z punktu widzenia projektu ten – społeczny - wymiar wspólnotowego definiowania znaczeń, określania pewnych miejsc jako historyczne i znaczące, sprawia, że dostępna jest tu nowa jakość danych o rzeczywistości społecznej. Dane te nie stanowią źródła wiedzy o infrastrukturze, ale pozwalają odpowiedzieć na pytanie, w jaki sposób przestrzeń jest definiowana ze względu na znaczenie dziedzictwa i pamięć o nim czyli jak interpretowane są lokalne i ponadlokalne tradycje?\footnote{W interpretacjach tego wymiaru warto pamiętać o koncepcji tradycji Erica Hobsbawna i Terence’a Rangera, por. tychże, Tradycja wynaleziona, Kraków: Wyd. UJ,2008.} Właśnie z tego punktu widzenia, dane te można potraktować jako interesujący wskaźnik wytwarzania wspólnych pamięci w społecznościach lokalnych. Dane z tego projektu są dystrybuowane w formie plików geojson. Niestety nie są udostępniane pełne zasoby opisowe, lecz jedynie podstawowe elementy identyfikujące obiekt ze względu na cechy przestrzenne, nazwę, czas powstania. \par
+
+Proces radzenia sobie z tak różnymi typami danych z plików szczegółowo prezentuje część raportu stworzona przez zespół partnera projektu, czyli pracowników Wydziału Geodezji i Kartografii Politechniki Warszawskiej. Etap ten w procesie budowy i zarządzania systemem określa się jako transformacja.\footnote{Miłosz Gnat, Raport końcowy z realizacji bazy danych przestrzennych i geoportalu Obiektów Żywej Kultury} Charakterystyka zebranego materiału znajduje się w kolejnym rozdziale. \par
+
+\chapter{Charakterystyka źródeł danych}
+
+Statystyczny opis rozkładów indeksów żywej kultury i innych zmiennych prezentujących materiały źródłowe jest tu przedstawiony na przykładzie baz KRS i OSM. Te dwie bazy posiadają najwyższy wskaźnik dopasowania trzech elementów: nazwy (jako komponentu identyfikującego), lokalizatora (jako komponentu przestrzennego) oraz typu działalności (jako komponentu funkcjonalnego). Aby uznać, że dane spełniają minimalny warunek jakości, przyjęliśmy, że oprócz określenia przestrzennego rekordu musi być zaznaczona nazwa lub przynależność do konkretnego indeksu infrastruktury żywej kultury. \par
+Szczególna sytuacja wystąpiła w wypadku danych z Centralnej Ewidencji i Informacji o Działalności Gospodarczej. Problem z bazą CEIDG ma charakter prawny i jest związany z danymi osobowymi. Jako podmiot, który pozyskał te dane nie mamy prawa ich redystrybucji, gdyż baza ta gromadzi informacje o osobach prywatnych. Natomiast kiedy usunie się dane o nazwie, przy braku przypisanych kategorii PKD, pozostają punkty, które nie posiadają atrybutu identyfikacyjnego funkcji. Nie można więc ich przedstawić w formie zestawienia terytorialnego. \par
+Są tutaj opisane dane punktowe, pozwalające zestawiać liczebności obiektów; pominięte zaś zostały dane zebrane w projekcie, które służą np. do wyznaczania odległości wg dróg czy pomiarów wielkości obiektów (lasów, jezior, niektórych budynków i obiektów użyteczności publicznej). Charakterystykę zebranego materiału rozpocznę od najwyższego poziomu uogólnienia danych, czyli kategorii grupujących funkcje społeczne. Najwięcej obiektów żywej kultury jest związanych z regulacją potrzeb podstawowych (219 072 obiektów), a najmniej z jakością życia (117 555 obiektów). Ogólna liczba obiektów żywej kultury, które mają precyzyjną charakterystykę funkcji wyniosła 507 691. Ich szczegółowy spis z uwzględnieniem bazy, z której pochodzą prezentuje Rysunek \ref{figure:5}.\par
+
+\begin{figure}[h]
+\caption{Obiekty żywej kultury wg funkcji regulującej (n=507 691).}
+\centerline{\includegraphics[width=16cm, height=6.5cm]{/home/mariusz/Obrazy/giskulturaraport/wykres1a.png}}
+%\centering
+\label{figure:5}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure} \par
+
+Dla porównania, w bazie BDL GUS obiektów infrastruktury kultury jest 14 tys. Są to takie obiekty, jak biblioteki, muzea, domy kultury, sale wystawiennicze, teatry itd. Z dwóch baz danych systemu „GIS Kultura” zebrano informację o ponad 17 tys. obiektach o podobnej charakterystyce. W tym kontekście warto przypomnieć, że tzw. wąska definicja kultury stosowana w statystyce GUS odpowiada dwóm indeksom – indeksowi kultury „wysokiej” i indeksowi infrastruktury upowszechniania kultury. Dane te stanowią tylko 3\% całości danych zgromadzonych w systemie (Rysunek \ref{figure:6}).\par
+\begin{figure}[h]
+\caption{Obiekty wąsko rozumianej kultury w bazie GIS Kultura (n=507 691).}
+\centerline{\includegraphics[width=14cm,height=10cm]{/home/mariusz/Obrazy/giskulturaraport/wykres2.png}}
+%\centering
+\label{figure:6}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure} \par
+
+Jeśli weźmie się pod uwagę wymiar przestrzenny, można znaleźć obszary, w których zebrane informacje odbiegają od danych gromadzonych przez GUS. Szczegółowe zestawienie prezentuje Rysunek \ref{figure:7}. Więcej obiektów w bazie infrastruktury kultury BDL niż udało się nam zebrać
+%%%%%%%%%%%%%%%%
+% O to chodzi? -PROSZĘ JAŚNIEJ!!%
+%%%%%%%%%%%%%%%%
+ występuje w województwach wielkopolskim, kujawsko-pomorskim, opolskim, podlaskim. Możliwa interpretacja takiego stanu rzeczy wskazywałaby na mniejsze zainteresowanie takimi obiektami społeczności openstreetmap mapującej w tych województwach.  Natomiast baza „GIS Kultura”, w przypadku województwa dolnośląskiego pokazuje dwukrotnie większą liczbę obiektów niż te, które są w sprawozdawczości GUS. Dla prototypu systemu zbierania informacji, taki wynik można uznać za sukces. Oczywiście jednoznaczne określenie z czego wynikają różnice w liczbie instytucji pomiędzy systemami, wymaga osobnych badań.\footnote{Warto przypomnieć, że drastyczne różnice w liczbach obiektów infrastrukturalnych między GUS a innymi statystykami są m.in. dokumentowane na przykładzie muzeów – por. Dorota Folga-Januszewska, Raport o muzeach, 2009, \url{http://www.kongreskultury.pl/title,Raport_o_muzeach,pid,137.html} czy teatrów – por. najnowsze wydawnictwo z 2016 roku: \url{http://www.instytut-teatralny.pl/nabytki/teatr-w-polsce-2016/}; przyczyny tkwią, jak wiadomo w sposobie definiowania przez GUS tych (i innych) obiektów.
+ } Indeksy były projektowane w taki sposób, żeby zbierać szerszą informację niż ta, dostępna dzięki GUS. Różnice na niekorzyść systemu GIS Kultura mogą wynikać z dwóch przyczyn. Po pierwsze, dane o obiektach zostały faktycznie zebrane, lecz nie udało się przypisać właściwego indeksu. W bazie danych ponad 327 tys. obiektów nie posiada przypisanej kategorii. Po drugie, użyte przez nas bazy danych, szczególnie openstreetmap, wykazują koncentrację w stosunku do pewnych obszarów kraju. Jednak patrząc na dynamikę projektu można mieć nadzieję, że ta sytuacja ulegnie poprawie i także te obszary zostaną zmapowane.\par
+\begin{figure}[p]
+\caption{Indeksy obiektów kultury wg GUS i obiekty żywej kultury wg indeksów upowszechniania kultury i kultury „wysokiej” w województwach.}
+\centerline{\includegraphics[width=19.5cm, height=16.5cm]{/home/mariusz/Obrazy/giskulturaraport/wykres3.eps}}
+%\centering
+\label{figure:7}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure} \par
+Nie wszystkie indeksy w wyniku automatycznego przetwarzania danych zostały uzupełnione. Stało się tak w przypadku indeksu infrastruktury nieformalnej/subkulturowej oraz infrastruktury administrowania kulturą. Mimo tego dane zgromadzone w systemie są dużo liczniejsze, niż te zbierane przez GUS i udostępniane w BDL. Szczegółowy rozkład liczebności rekordów KRS wg typów indeksów OZK prezentuje  Rysunek \ref{figure:8}. Na wykresie tym przedstawione jest porównanie baz obiektów  uzyskanych z KRS i tych z  bazy OSM, która jest omawiana w dalszej części niniejszego opracowania.\par
+
+\begin{figure}[p]
+\caption{Obiekty żywej kultury wg indeksów (n=834 883).}
+\centerline{\includegraphics[width=19.5cm, height=16.5cm]{/home/mariusz/Obrazy/giskulturaraport/wykres4.eps}}
+%\centering
+\label{figure:8}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure} \par
+
+Prezentację materiałów źródłowych rozpocznę od charakterystyki danych KRS. Ogólna liczba rekordów pozyskanych z KRS (stan na lipiec 2015 roku) wyniosła 401 374 (są to te, które posiadały nazwę). Jednak liczba rekordów, które udało się pomyślnie zgeokodować wyniosła 374 771. Skuteczność geokodowania wynika np. z formatu zapisu adresów w bazie rekordów, w której nie ma żadnego ujednoliconego sposobu tych zapisów. Z całkowitej liczby obiektów, którym można było przypisać współrzędne geograficzne - 223 731 rekordów uzyskało jednoznaczne oznaczenie działalności w bazie PKD i procedury wyznaczania rang. Niewiele ponad 151 tys. rekordów pozostało \textit{pustych}, czyli bez opisu lub z opisem dalece niekompletnym. \par
+Skuteczność działania użytego algorytmu w przypadku organizacji społecznych i zawodowych była niewielka. Jedynie w przypadku 338 rekordów należących do tej kategorii udało się uzyskać przypisaną funkcję w bazie PKD. Jednak w trakcie analiz możliwe jest przypisanie w bazie typu działalności - indeksu infrastruktury NGO dla ponad 71 tys. rekordów. Redukuje to liczbę nieznanych obiektów ze 151 tys. do niewielu ponad 80 tys. Masowa obróbka danych, kosztownych do pozyskania, nie pozwoliła na dalsze precyzyjne przyporządkowanie rekordów. Takie działanie powinno więc być kontynuowane w toku dalszych prac, w których należałoby stworzyć infrastrukturę informatyczną do aktualizacji danych z KRS i CEIDG wg typów działalności.\par
+
+Dodatkową, cenną informacją w wypadku bazy KRS jest możliwość przeprowadzania analiz przestrzennych wg typu organizacyjnego. Można wykorzystać tą zmienną jako zaczątek konstruowania systemu przypisywania szczegółowego indeksu funkcjonalnego, gdy zawiodły inne metody klasyfikacji. Rozkład częstości występowania typów organizacyjnych dla obiektów, którym nie został przypisany indeks infrastruktury, prezentuje Wykres 5. Blisko 45\% rekordów w bazie są to spółki z ograniczoną odpowiedzialnością i spółki jawne, które prowadzą bardzo różną działalność, jednak wśród pozostałych 55\% rekordów są zarówno stowarzyszenia, fundacje, jak i związki zawodowe i instytuty badawcze. Można traktować je jako elementy wchodzące w skład indeksu infrastruktury NGO. Wówczas liczba elementów nieokreślonych zostanie zmniejszona o blisko połowę. Przechowanie tych danych sprawia, że można się do nich odwołać i poprawiać je ręcznie, w momencie wykonywania analiz na poziomach konkretnych gmin.  \par
+\begin{landscape}
+	\thispagestyle{empty}
+\begin{figure}[p]
+\caption{Obiekty z KRS, których funkcji nie określono ze względu na typ prawny (n=151 040).}
+\centerline{\includegraphics[width=21.5cm, height=14cm]{/home/mariusz/Obrazy/giskulturaraport/wykres5.eps}}
+%\centering
+\label{figure:9}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure} \par
+\end{landscape}
+% 18:26
+Pierwszą możliwą do wykonania analizą przestrzenną jest odpytanie bazy danych wg kategorii - typu infrastruktury żywej kultury (Typ OŻK), ze względu na typ prawny obiektu definiowany w bazie KRS. Wynik takiego zapytania prezentuje Tabela \ref{Table:2}. Blisko 60 tys. rekordów, to spółki z ograniczoną odpowiedzialnością, którym nie udało się przypisać typu infrastruktury żywej kultury, ale podobna liczba obiektów z tego typu to infrastruktura usług produkcyjnych. Oczywiście wyzwaniem na przyszłość jest zmniejszanie braków w bazie. Warto jednak pamiętać, że nasz projekt jest prototypowy i w skali blisko miliona unikatowych rekordów, tego typu braki są nieuniknione. Można więc mówić tu raczej o szacunkach, niż o pewności wyników.  \par
+\begin{table}[h]
+\centering
+\caption{Typ Obiektu Żywej Kultury ze względu na typ obiektu KRS - 10 najbardziej licznych.}
+\label{Table:2}
+\scalebox{0.8} {
+\begin{tabular}{m{5cm}m{5cm} |r |r|}
+
+Typ OZK                               & Typ obiektu KRS                         & Procent & Liczba  \\ \hline\hline
+Infrastruktura usług produkcyjnych    & SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ & 15,823  & 59252           \\ \hline
+None                                  & SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ & 15,767  & 59044           \\ \hline
+None                                  & STOWARZYSZENIE                          & 13,248  & 49610           \\ \hline
+Infrastruktura handlowa               & SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ & 11      & 41190           \\ \hline
+Infrastruktura produkcyjna            & SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ & 5,405   & 20240           \\ \hline
+None                                  & FUNDACJA                                & 2,794   & 10463           \\ \hline
+None                                  & SPÓŁKA JAWNA                            & 2,349   & 8796            \\ \hline
+Infrastruktura instytucji finansowych & SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ & 2,253   & 8435            \\ \hline
+Infrastruktura przemysłó kultury    & SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ & 1,936   & 7250            \\ \hline
+Infrastruktura handlowa               & SPÓŁKA JAWNA                            & 1,869   & 6999            \\ \hline
+None                                  & ZWIĄZEK ZAWODOWY                        & 1,452   & 5437            \\ \hline
+\end{tabular}
+}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{table}
+
+Konstrukcja bazy danych, nawet przed procesem harmonizacji, pozwala na wykonywanie interesujących zestawień o charakterze przestrzennym. Możliwe jest określenie typów obiektów według typów infrastruktury żywej kultury z rozmieszczeniem w województwie, powiecie, gminie. Co więcej, dane o precyzji co do punktu w przestrzeni, pozwalają swobodnie kształtować granice przestrzenne. Zestawienie wg województw przedstawia Tabela \ref{Table:3}. Liczebności typów infrastrukturalnych ze względu na typ prawny stają się niewielkie w rozkładzie wojewódzkim i nie przekraczają 1000 obiektów. Świadczyć to może o zróżnicowanej strukturze pozyskanych danych.
+
+\begin{table}[]
+\centering
+\caption{Typ Obiektu Żywej Kultury ze względu na typ obiektu KRS wg. województw - 10 z największą liczebnością.}
+\label{Table:3}
+\scalebox{0.9} {
+\begin{tabular}{m{3.5cm}m{3cm} m{2cm} | r |r|}
+Typ obiektu KRS                         & Typ OZK                     & województwo        & Procent & Liczba \\\hline\hline
+SPÓŁKA Z OGRANICZONĄ ODPOWIEDZIALNOŚCIĄ & Infrastruktura transportowa & mazowieckie        & 0,264   & 988                 \\
+ &  & śląskie            & 0,074   & 278                 \\
+ &  & wielkopolskie      & 0,071   & 266                 \\
+ & & dolnośląskie       & 0,057   & 215                 \\
+ &  & pomorskie          & 0,053   & 200                 \\
+ &  & małopolskie        & 0,053   & 200                 \\
+ &  & łódzkie            & 0,035   & 132                 \\
+ &  & lubuskie           & 0,031   & 116                 \\
+ &  & podkarpackie       & 0,03    & 112                 \\
+ &  & kujawsko-pomorskie & 0,022   & 81                  \\\hline
+SPÓŁKA KOMANDYTOWA                      & Infrastruktura transportowa & mazowieckie        & 0,018   & 66                 
+\end{tabular}
+}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{table}
+Drugie serce systemu - baza danych openstreetmap (OSM), składa się z 460 170 wyodrębnionych obiektów1. Jest to wynik uzyskany po zastosowaniu pliku słownika na bazie najczęściej pojawiających się kategorii tagów. Został on skonstruowany w oparciu o bazę systemu https://taginfo.openstreetmap.org, który pozwala na analizy relacji między tagami oraz na analizy frekwencyjne. Słownik składa się z 713 kategorii (tagów). W efekcie ostatniej operacji wyodrębniania uzyskane zostały 563 tagi, które znalazły się w obrębie Polski co najmniej jeden raz. Rysunek~\ref{figure:7} na stronie~\pageref{figure:7}.Blisko 22\% przyporządkowanych indeksów infrastruktury dotyczy transportu i handlu. Można to wyjaśnić charakterem projektu społecznościowego, mapy są potrzebne i wykorzystywane w komunikacji, w planowaniu podróży – długich, jak i krótkich (np. drogi do pracy). W projekcie mapowane są przystanki komunikacji publicznej, ale też stacje paliw. Infrastruktura handlowa to miejsca robienia zakupów, począwszy od sklepów osiedlowych po centra handlowe.  \par
+Wyjaśnienia wymaga ponownie kwestia dominacji kategorii \textit{Nieokreślone}. Jest to kategoria robocza, w której znajdują się dane nie przyporządkowane do żadnego z indeksów obiektów żywej kultury. Jak już wcześniej zaznaczyłem, są to zarówno błędy w klasyfikacji, literówki w nazwach tagów, ale też zgromadzone nazwy własnych obiektów geograficznych (tag – \textit{place}). Te ostatnie są wykorzystywane w celu generowania map zasadniczych. Rozkład liczebności elementów nieklasyfikowanych wg kategorii żywej kultury prezentuje Rysunek \ref{figure:10}. 
+
+\begin{landscape}
+	\thispagestyle{empty}
+\begin{figure}[p]
+\caption{Obiekty z OSM, których nie zostały przypisane do indeksów obiektów żywej kultury ze względu na charakterystykę tagów (n=176 152).}
+\includegraphics[width=21.5cm, height=14cm]{/home/mariusz/Obrazy/giskulturaraport/wykres6.eps}
+\centering
+\label{figure:10}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure}
+\end{landscape}
+
+Podczas analizy samych tagów z projektu openstreetmap (Tabela \ref{Table:4}), najczęściej pojawiały te należące do klucza (\textit{key}) place o wartościach (\textit{value}) \textit{hamlet} i \textit{village}. Zgodnie z konsensusem projektu openstreetmap – \textit{hamlet} to sposób oznaczania osad zamieszkiwanych przez mniej niż 200 osób, \textit{village} to zaś miejscowości z ludnością między 1000 a 10000 mieszkańców. 
+
+\begin{table}[h]
+\centering
+\caption{Częstości występowania obiektów z bazy OSM ze względu na typ indeksu obiektu żywej kultury – 10 najczęściej występujących.}
+\label{Table:4}
+\scalebox{0.9} {
+\begin{tabular}{m{5cm}m{5.5cm}| r |r|}
+Nazwa tagu openstreetmap      & Nazwa indeksu OZK                 & Procent & Liczba \\\hline\hline
+place\_hamlet                 & Nieokreślona                      & 12,388  & 57007  \\
+place\_village                &                       & 10,468  & 48169  \\
+Building                      &                      & 7,623   & 35077  \\\hline 
+stop\_position\_              & Infrastruktura transportowa       & 4,806   & 22117  \\
+amenity\_place\_\_of\_worship & Infrastruktura kultury religijnej & 3,111   & 14315  \\
+Natural                       & Infrastruktura oswojonej natury   & 2,733   & 12578  \\
+Landuse                       & Nieokreślona                      & 2,288   & 10530  \\
+amenity\_restaurant           & Infrastruktura gastronomii        & 2,119   & 9751   \\
+amenity\_school               & Infrastruktura edukacji i nauki   & 2,104   & 9683   \\
+place\_neighbourhood          & Nieokreślona                      & 1,86    & 8558   \\
+shop\_convenience             & Infrastruktura handlowa           & 1,729   & 7956  
+\end{tabular}
+}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{table}
+Trzeci tag w kolejności jest kategorią ogólną. Są to obiekty, które posiadają klucz (\textit{key}) – \textit{building,} natomiast wartość (\textit{value}), jest pusta - z błędem literowym, lub nie należy do elementu zbieranego przez słownik przypisujący do obiektów (np. wartości – \textit{other}). Podobnie ma się sytuacja z kluczem (\textit{key}) - \textit{landuse}.  \par
+Na podstawie tych dwóch baz danych widać jak różne obszary one pokrywają. Baza KRS jest bogatym źródłem wiedzy o przemyśle i organizacjach społecznych, baza openstreetmap - o handlu i infrastrukturze transportowej. Użycie tych baz i zaprezentowanych narzędzi może stanowić prototyp systemu aktualizacji danych o życiu społecznym w kraju. Dane są ogólnodostępne i pozwalają na automatyzację procesu określania funkcji dla innych systemów. 
+
+	\chapter{Funkcjonalność systemu.}
+\section*{Kierunki analizy danych.}
+
+Sercem systemu „GIS Kultura” jest baza danych, która umożliwia wykonywanie operacji analitycznych i wizualizację danych na mapach. W części tej zostaną zaprezentowane możliwości pracy na danych przestrzennych, które pozwalają na połączenie różnych podejść metodologicznych w analizach kultury. Analizy te można podzielić na implicite i explicite przestrzenne. Poniżej przedstawiam różne operacje dokonane w ramach systemu, ale nie są to jeszcze pełne (kompletne, dokładne) badania stanu kultury. W większości tych analiz pod uwagę była brana ograniczona liczba zmiennych.
+\par
+%21:03 26 02
+\section{Analizy implicite przestrzenne.}
+
+\subsection{Wydatki na kulturę ze względu na typ historyczny. Zestawienia.}
+
+We wcześniejszej części raportu została przedstawiona mapa historyczna Polski (Rysunek \ref{figure:4} na stronie \pageref{figure:4}).Dane umożliwiające jej stworzenie pozwalają np. poszukać odpowiedzi na takie pytania jak: czy wydatki na kulturę z budżetów gmin (pozycja budżetu 921) są podobne w różnych regionach, czy może się różnią? W tym celu do analizy zostały pobrane dane z Banku Danych Lokalnych o wydatkach gmin w pozycji 921. Następnie zostały one połączone z bazą typów historycznych gmin. Poniżej opisanych jest kilka rodzajów analiz, które przeprowadziliśmy. W pierwszej kolejności określone zostały sumaryczne wydatki na kulturę w zależności od typu historycznego. Wyniki przedstawia Tabela \ref{Table:5}.
+
+
+\begin{table}[h]
+\centering
+\caption{Suma wydatków na kulturę ze względu na typ historyczny (dane na rok 2015).}
+\label{Table:5}
+\begin{tabular}{l|r|}
+Typ historyczny  & Suma wydatków       \\\hline\hline
+Zabór rosyjski   & 1 937 649 922 zł \\
+Ziemie odzyskane & 1 752 195 877 zł \\
+Zabór pruski     & 999 880 275 zł   \\
+Zabór austriacki & 721 460 038 zł  
+\end{tabular}
+\vfill
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+
+
+\end{table}
+Największe sumaryczne wydatki na kulturę są w gminach, które znajdowały się w obszarze dawnego zaboru rosyjskiego, ale na drugim miejscu pojawił się tu obszar, na którym nie było – jak widać zakorzenionych tradycji. Te trzeba było dopiero wytworzyć.\footnote{Por. Elżbieta Berendt (red.), Mom jo skarb. Dolnośląskie tradycje w procesie przemian, Wrocław: Wyd. Muzeum Etnograficzne we Wrocławiu, 2009.} Można też sprawdzić, czy ta sytuacja ulega zmianie jeśli w analizach pominie się Warszawę. Takie zestawienie prezentuje bela \ref{Table:6}.
+
+\begin{table}[h]
+\centering
+\caption{ Wydatki na kulturę ze względu na typ historyczny (dane na rok 2015), bez M. st. Warszawa.}
+\label{Table:6}
+\begin{tabular}{l|r|}
+Typ historyczny  & Suma wydatków       \\\hline\hline
+Ziemie odzyskane & 1 752 195 877,00 zł \\
+Zabór rosyjski   & 1 496 260 933,00 zł \\
+Zabór pruski     & 999 880 275,00 zł   \\
+Zabór austriacki & 721 460 038,00 zł 
+\end{tabular}
+\vfill
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{table}
+
+W dalszej kolejności można przeprowadzić analizy, wyodrębniając typy gmin z zestawienia. Za pomocą tradycyjnych metod łatwo uzyskać wyniki z jednego typu gminy. System pozwala z kolei na elastyczne zadawanie pytań, które pomijają pewne wartości. W efekcie można wskazać wszystkie gminy np. bez typu gmin wiejskich czy miejskich.(Tabela \ref{Table:7}).
+
+\begin{table}[h]
+\centering
+\caption{ Wydatki na kulturę ze względu na typ historyczny (dane na rok 2015), wg typów gmin.}
+\label{Table:7}
+\begin{tabular}{l|r|r|r|}
+Typ historyczny  & Bez gmin miejskich & Bez gmin wiejskich  & Bez gmin miejsko-wiejskich \\\hline\hline
+Zabór rosyjski   & 749 370 342,00 zł  & 1 480 807 464,00 zł & 1 645 122 038,00 zł        \\
+Ziemie odzyskane & 679 109 607,00 zł  & 1 460 320 704,00 zł & 1 364 961 443,00 zł        \\
+Zabór pruski     & 428 246 012,00 zł  & 800 983 739,00 zł   & 770 530 799,00 zł          \\
+Zabór austriacki & 341 192 372,00 zł  & 521 195 394,00 zł   & 580 532 310,00 zł    
+\end{tabular}
+\vfill
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{table}
+Dzięki zastosowaniu mechanizmu baz danych relacyjnych, używając składni języka SQL do analiz, można przyśpieszyć proces weryfikacji hipotez. Wreszcie analizując dwie zmienne, typ historyczny gminy i wydatki na kulturę, można rozszerzyć część analityczną o nową zmienną – liczbę ludności. Dzięki temu możliwe jest określenie wydatków na kulturę na mieszkańca ze względu na typ historyczny. Zestawienie to prezentuje Tabela \ref{Table:8}.
+
+\begin{table}[h]
+\centering
+\caption{ Wydatki na kulturę na mieszkańca ze względu na typ historyczny (dane na rok 2015).}
+\label{Table:8}
+\begin{tabular}{l|r|}
+Typ historyczny  & Suma wydatków       \\\hline\hline
+Ziemie odzyskane &  142,25 zł\\
+Zabór pruski     &  117,78 zł  \\
+Zabór austriacki &  99,81 zł \\
+Zabór rosyjski   &  99,35 zł
+\end{tabular}
+\vfill
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{table}
+
+Ten ostatni wskaźnik można uznać za najbardziej miarodajny w formułowaniu wniosków o rozproszeniu wydatków na kulturę ze względu na parametr przestrzenny. Najmniejsze średnie wydatki na kulturę na mieszkańca są w gminach dawnego zaboru rosyjskiego. Średnia arytmetyczna wyliczana jako wskaźnik dla gmin może być obarczona błędami wynikającymi z dużego rozproszenia danych. Dlatego też za miarę centralną zmiennej warto obrać medianę. Jednak w przypadku danych o wydatkach na kulturę, różnice pomiędzy średnią arytmetyczną są niewielkie, co przedstawione jest na Rysunku \ref{figure:11}.
+ Najmniejsze wydatki na kulturę będą w zaborze austriackim (99 zł), o złotówkę wyższe zaś w gminach dawnego zaboru rosyjskiego. Do prezentacji danych wykorzystane zostały dwa wykresy nałożone na siebie:\textit{ wykres skrzypcowy}, którego kształt przypomina odbity w lustrze histogram\footnote{Dane przekształcone są w oparciu o wskaźnik kernel density estimation – za R. Poniat, O wykorzystaniu wykresów pudełkowych w: „Przyszłość demograficzna Polski” (34) 2014, ss. 103-120}, oraz \textit{wykres pudełkowy}, z zaznaczoną medianą dla każdego z typów historycznych. Olbrzymią zaletą takiego zaprezentowania danych jest możliwość uwzględnienia wartości odstających.
+
+\begin{landscape}
+\thispagestyle{empty}
+\begin{figure}[h]
+\caption{Wydatki na kulturę ze względu na typ historyczny w gminach.}
+\includegraphics[width=21.5cm, height=14cm]{/home/mariusz/Obrazy/giskulturaraport/wykres7.eps}
+%\centering
+\label{figure:11}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+
+\end{figure} 
+\end{landscape}\par
+
+\subsection{Wydatki na kulturę. Wizualizacja danych.}
+
+System „GIS Kultura” to także elastyczny mechanizm pracy z danymi. Efekty analiz mogą być dostępne w formie zestawień tabelarycznych, jednak wielokrotnie dane prezentowane w formie map przestrzennych pozwalają na lepszą organizację danych: pozostając przy problematyce wydatków na kulturę z budżetów gmin, można zaprezentować problem, który względnie łatwo przedstawia się przy użyciu map.  \par
+
+Wizualizacja wydatków budżetowych na poziomie gminy w postaci mapy musi podlegać pewnym generalizacjom. W innym przypadku byłoby to 2478 gmin, które należałoby wyróżnić bądź kolorem, bądź dodając jakiś kształt. Liczba informacji na obrazie byłaby zbyt duża do przetworzenia dla osoby oglądającej wizualizację. Dlatego też, aby zredukować złożoność modelu warto zastosować jakąś formę tworzenia przedziałów. Jednym ze sposobów jest metoda równolicznych przedziałów (metoda kwantyli). Rysunek \ref{figure:12} przedstawia użycie metody kwantyli do zaprezentowania wydatków gmin na kulturę, przy użyciu oprogramowania QGIS. \par
+\begin{figure}[h]
+\caption{Użycie metody kwantyli do zaprezentowania wydatków gmin na kulturę, przy użyciu oprogramowania QGIS.}
+\centerline{\includegraphics[width=1.2\textwidth]{/home/mariusz/Obrazy/giskulturaraport/qgis1.png}
+%\centering
+\label{figure:12}}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure} \par
+
+Dzięki użyciu koloru w jednolitej tonacji (jasne odcienie pokazują niskie wartości, ciemne - wysokie wartości) dostrzec można obszary koncentracji wysokich i niskich nakładów. Dalej - można nałożyć kolejny typ mapy i sprawdzić czy pewne dane się wizualnie pokrywają. Rysunek \ref{figure:13} pokazuje nałożenie zakresu granic podziałów historycznych na warstwy z mapą rozkładów wydatków. \par
+
+\begin{figure}[h]
+\caption{Nałożenie zakresu granic podziałów historycznych na warstwy z mapą rozkładów wydatków.}
+\centerline{\includegraphics[width=1.2\textwidth]{/home/mariusz/Obrazy/giskulturaraport/qgis2.png}
+%\centering
+\label{figure:13}}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure} \par
+Warto tu jednak zaznaczyć, że celem tego raportu nie jest rozstrzyganie czy podziały historyczne rzutują na wydatki na kulturę. Aby móc odpowiedzieć na to pytanie należałoby przeprowadzić o wiele szersze badanie, w którym należałoby skonstruować właściwą aparaturę pomiarową, uwzględniającą także wiele innych danych. \par
+Przykładowo tu przywołana tematyka wydatków na kulturę, może być prezentowana dzięki jeszcze jednemu sposobowi pracy z danymi przestrzennymi. Praca analityczna z danymi jest wielokrotnie pracą przy użyciu podstawowych operacji arytmetycznych. Oparcie bazy „GIS Kultura” na systemie bazy Postgresql umożliwia wykorzystanie bezpośrednio w jednym narzędziu dostępu do operacji matematycznych. Na wskaźnikach można wykonywać operacje dodawania, odejmowania, mnożenia, dzielenia, ale także inne z obszaru statystyk opisowych. \par
+Pytania, które zostały tu zadane jako następne dotyczą dość intrygującej kwestii: czy istnieją gminy, które zarabiają na kulturze? A jeśli tak, to które to są gminy? W tym celu zgromadziliśmy dane o dochodach w pozycji 921 i od nich zostały odjęte wydatki na kulturę i dziedzictwo narodowe. Zapytanie ograniczone są tutaj w taki sposób, żeby pokazały się tylko wartości większe niż 0 zł. W efekcie otrzymaliśmy listę 51 gmin, które - wg GUS - wykazują zyski w tej pozycji. Listę gmin prezentuje Tabela \ref{Table:8}.\footnote{Wartość (2) przy nazwach gmin oznacza gminy wiejskie wg kodów TERYT.Taką formę zapisu stosuje GUS w bazie BDL.} na stronie \pageref{Table:8}. \par
+
+\begin{table}[]
+\centering
+\caption{Gminy, które wykazały dodatnie saldo w pozycji 921, 5 gmin z najwyższymi kwotami.}
+\label{Table:9}
+\begin{tabular}{l|l|r|r|r|}
+Gmina         & województwo & saldo           & dochody     & wydatki     \\\hline\hline
+Krośnice (2)  & dolnośląskie & 1 896 940,09 zł & 12334599,82 & 10437659,73 \\
+Łodygowice (2)& śląskie & 1 260 009,36 zł & 2553198,82  & 1293189,46  \\
+Wilkowice (2) & śląskie & 768 804,73 zł   & 2538069,61  & 1769264,88  \\
+Malechowo (2) & zachodniopomorskie & 686 577,77 zł   & 1437842,85  & 751265,08   \\
+Daszyna (2)  & łódzkie & 641 499,64 zł   & 835808,67   & 194309,03   
+\end{tabular}
+\vfill
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{table}
+
+Zamiast zaprezentować listę składającą się z 51 elementów, warto ponownie zastosować którąś z metod klasyfikacji. W przypadku, kiedy rozstęp między wartościami jest znaczny (tu wynosi np. 1.892.417 zł) i rozkład nie odbiega od normalnego, albo celem miałoby być wyodrębnienie jednostek dla dalszych badań, można skorzystać z klasyfikacji Jenksa - metody naturalnych przerw\footnote{Jest to jedna z metod analizy skupień, w której redukuje się wariancję w obrębie klas, i zwiększa się wariancję pomiędzy klasami.} Następną czynnością jest zaprezentowanie tych danych na mapie. W tym celu ponownie użyte zostało oprogramowanie QGIS. Efekt analizy prezentuje Rysunek \ref{figure:14} na stronie \pageref{figure:14}.
+Przedziały zostały ustalone w taki sposób, żeby podkreślić te, które są wartościami ekstremalnymi; odczytując dane z mapy, można dostrzec brak gmin w województwie warmińsko-mazurskim oraz dużą koncentrację gmin w województwie łódzkim.  \par
+\newpage
+\begin{figure}[h]
+\caption{Gminy, które wykazały dodatnie saldo w pozycji 921, metoda klasyfikacji - kwantyle.}
+\includegraphics[width=1.4\textwidth]{/home/mariusz/Obrazy/giskulturaraport/mapa2a.png}
+\centering
+\label{figure:14}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure} \par
+
+Dane, które posiadają jakąś formę identyfikacji terytorialnej można opracować na wiele sposobów. Dotychczas zostały zaprezentowane te, które za punkt wyjścia przyjmują hipotezę przestrzenną i te, które przyjmują hipotezę o wielkości wartości. W wypadku badań implicite przestrzennych, najbardziej podstawowe analizy są związane z klasyfikacją danych. W zależności od rodzaju analiz wykorzystuje się różne sposoby Rysunki \ref{figure:15} i \ref{figure:16} prezentuje dwie kontrastujące metody.\par
+%21:46 26 luty
+W obu przypadkach prezentowane są dane o migracjach mieszkańców gmin pomiędzy rokiem 2005 rokiem a 2015. Rysunek \ref{figure:15} prezentuje dane w oparciu o metodę klasyfikacji wg równych przedziałów. Wartości ujemne i dodatnie wyróżnione są w oparciu o ciepłą i zimną gamę kolorystyczną. Gamy zimne oznaczają wartości poniżej 0, gamy ciepłe oznaczają wartości powyżej 0. Na Rysunku \ref{figure:16} klasy są stworzone metodą kwantyli – wydzielono 8 równolicznych przedziałów. Sposób prezentacji oparty jest o jednolitą gamę kolorystyczną, gdzie początkowe wartości mają najmniejsze nasycenie barwy. Wyraźnie dostrzec można tutaj tendencje suburbanizacji wokół pewnych miast np. Poznania, Wrocławia, Łodzi. 
+
+\begin{figure}[]
+\caption{Migracje ludności między gminami w Polsce pomiędzy rokiem 2005 a 2015.Przedziały tworzone metodą równych podziałów.}
+\includegraphics[width=0.86\textwidth]{/home/mariusz/Obrazy/giskulturaraport/mapa3a.png}
+%\centering
+\label{figure:15}
+\vfill
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure} \par
+\begin{figure}[]
+\caption{Migracje ludności między gminami w Polsce pomiędzy rokiem 2005 a 2015.Przedziały tworzone metodą kwantylową.}
+\includegraphics[width=0.8\textwidth]{/home/mariusz/Obrazy/giskulturaraport/mapa3b.png}
+\centering
+\label{figure:16}
+\vfill
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure} \par
+\pagebreak
+\clearpage
+
+Analiza danych przestrzennych pozwala na zaobserwowanie wzorców, które w samej analizie tabelarycznej byłby trudne do uchwycenia. Przypadek dotyczący migracji ludności naprowadza na poszukiwanie tendencji rozwojowych, wokół konkretnych obszarów miejskich. Pewną propozycją analityczną może być raport Macieja Smetkowskiego, Bohdana Jałowieckiego, Grzegorza Gorzelaka pt. „Obszary metropolitalne w Polsce: problemy rozwojowe i delimitacja”\footnote{\url{http://www.euroreg.uw.edu.pl/dane/web_euroreg_publications_files/602/obszary_metropolitalne_w_polsce_problemy_rozwojowe_i_delimitacja.pdf}}. \par
+W celu analizy wydatków na kulturę w obszarach metropolitalnych należało w pierwszym kroku stworzyć i zaktualizować bazę danych o gminach z 2008 roku. Dzięki temu możliwe było zwizualizowanie tych danych (Rysunek \ref{figure:16}). Pytanie o wielkość wydatków na kulturę i dziedzictwo narodowe jest związane z pytaniem do bazy tylko o te gminy. Wydatki sumaryczne gmin z typu A1 najbliższego ośrodkowi metropolitalnemu i B2 znajdującego się w najdalszej strefie wpływu przedstawia Tabela \ref{figure:17}.\par
+
+
+\begin{table}[b]
+\centering
+\caption{Wydatki sumaryczne gmin z typu A1 najbliższego ośrodkowi metropolitalnemu i B2 znajdującego się w najdalszej strefie wpływu.}
+\label{Table:13}
+\scalebox{1} {
+\begin{tabular}{ll|r|}
+Nazwa ośrodka metropolitalnego & Typ metropolitalny & Suma wydatków na kulturę \\\hline\hline
+Warszawa                       & A1A                & 98 946 759,00 zł         \\
+& B2                 & 12 323 772,00 zł         \\\hline
+Poznań                         & A1A                & 46 078 855,00 zł         \\
+& B2                 & 21 725 798,00 zł         \\\hline
+Wrocław                        & A1A                & 24 383 639,00 zł         \\
+& B2                 & 42 993 725,00 zł  		\\\hline
+Trójmiasto                     & A1A                & 20 493 920,00 zł         \\
+& B2                 & 25 023 636,00 zł         \\\hline
+Kraków                         & A1A                & 16 534 151,00 zł         \\
+& B2                 & 33 905 353,00 zł         \\\hline
+Łódź                           & A1A                & 9 228 513,00 zł          \\
+& B2                 & 50 822 263,00 zł      	\\\hline
+Konurbacja Śląska              & A1A                & 2 304 228,00 zł          \\
+             & B2                 & 22 768 769,00 zł        
+
+    
+
+
+      
+\end{tabular}
+}
+\vfill
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{table}	
+Zestawienie danych może stanowić przyczynek do dalszych analiz procesów suburbanizacji. Szczególnie interesująca w tym kontekście może być okręg łódzki, w którym relacja pomiędzy gminami z typu A1 do B2 wskazuje na znaczny udział w metropolii słabo zintegrowanych gmin. Dodatkowo te najdalej wysunięte na wschód niemal sąsiadują z metropolią warszawską. Bardzo podobna sytuacja jest w Konurbacji Śląskiej, gminy typu B2 graniczą z metropolią krakowską. Spoglądając na politykę kulturalną  przez pryzmat relacji centrum-peryferie na tych obszarach pomija się więc wyraźną autonomię tych gmin. Ujmowane \textit{en bloc} ujawniają siłę słabych gmin w tych metropoliach, lub też słabość centrów tych metropolii. 	
+\begin{figure}[h]
+\caption{Gminy wg typu metropolitalnego.}
+\includegraphics[width=1.2\textwidth]{/home/mariusz/Obrazy/giskulturaraport/mapa4.png}
+\centering
+\label{figure:17}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure} \par
+
+%dodanie komentarza do tabeli
+\newpage
+
+\clearpage
+\section{Analizy explicite przestrzenne.}
+%8:57 27 luty
+Możliwości analityczne systemu zaprezentowane w poprzedniej części raportu bazują na identyfikacji przestrzennej zgodnej z kodami TERC – systemu Teryt. Analizy są realizowane do poziomu gminy. Jednak pytanie przestrzenne, które jest najbardziej podstawowe, dotyczy odległości wyrażonej w jednostce miary, w metrach, bądź kilometrach. Dla pytania jak wygląda otoczenie kulturalne, bardziej pożądaną i przystającą do sposobu myślenia odpowiedzą z punktu widzenia uczestnika wydarzeń kulturalnych jest odpowiedź, która pokaże obiekty w odległości 1 km od zdefiniowanego punktu, niż odpowiedź, która będzie zawierała obiekty w granicach administracyjnych. W tej części niniejszego opracowania zostaną zaprezentowane możliwości, jakie daje system „GIS Kultura” w poszukiwaniach odpowiedzi na pytanie: jak wygląda otoczenie kulturalne danego obiektu ze względu na odległość wyrażoną w jednostkach miary?
+
+\subsection{Obiekty wokół punktu. Jeszcze raz o wydatkach gmin.}
+Mapa gmin w otoczeniu metropolitalnym jest efektem stworzenia wielowymiarowych wskaźników, uwzględniających zmienne gospodarcze i społeczne. Jednak zanim przystąpi się do budowy wskaźników bazując na danych GUS, można rozpocząć analizy od wyznaczenia gmin, które znajdują się w pewnej zdefiniowanej odległości od przyjętego punktu. Pojawiają się tutaj dwa zagadnienia, w jaki sposób wyznaczyć punkt początkowy, i w jaki sposób wyznaczyć odległość. Do wyznaczenia punktu, od którego rozpoczynamy analizy, można zastosować metodę szukania centroidu, czyli przestrzennego środka pewnej powierzchni, lub zrobić to arbitralnie – definiując dany obiekt jako punkt początkowy. Nawet tak ogólne sformułowanie, że środkiem będzie centrum miasta sprawia, iż możemy szukać centroidu dzielnicy, w której znajdują się instytucje municypalne lub - bardziej ogólnie - wiązać środek np. z ratuszem miejskim czy dworcem kolejowym itd. Podobnie z wyznaczaniem odległości - można mówić o odległości, którą da się pokonać pieszo, rowerem, samochodem, komunikacją publiczną lub, bardziej ogólnie, odległość ta może być wyznaczana po linii prostej od punktu. W tej części raportu  zademonstrowane jest wykorzystanie systemu „GIS Kultura” do wyznaczenia gmin, które znajdują się w odległości 25 km od Ratusza Miejskiego we Wrocławiu oraz określenie wydatków na kulturę na osobę w tych gminach.\par
+Dzięki silnikowi bazy relacyjnej i składni SQL można zadać pytanie jedną komendą.
+\begingroup
+\fontsize{10pt}{9pt}\selectfont
+\begin{verbatim}
+%\begin{lstlisting}[frame=single]
+select sum(wyd_kult_gminy.wyd_2015::integer)::money, metropol_metropolia,
+		metropol_typ, way, nazwa_2016
+from bazy.wyd_kult_gminy
+left join bazy.ludnosc_wg_lat
+on lpad(bazy.wyd_kult_gminy.kod::text,7,'0')::text = bazy.ludnosc_wg_lat.teryt::text 
+left join bazy.zmiany_teryt_gminy
+on bazy.ludnosc_wg_lat.teryt::text = zmiany_teryt_gminy.teryt
+left join gminy_osm_teryt
+on bazy.ludnosc_wg_lat.teryt::text = gminy_osm_teryt.teryt
+cross join
+(Select st_point(17.031924, 51.109566)::geography AS ref_geog) as r
+where st_dwithin(way,
+ ST_Transform(
+	ST_SetSRID(ST_Point(17.031924, 51.109566 ), 4326), 2180), 25000)
+group by metropol_metropolia, metropol_typ, way,nazwa_2016
+order by metropol_metropolia desc, metropol_typ asc
+%\end{lstlisting}
+\end{verbatim}
+\endgroup
+Taka komenda przy użyciu systemu pozwala na prezentację wyników w formie graficznej. Do prezentacji został wykorzystany program QGIS. Efekt takiej analizy prezentuje Rysunek \ref{figure:18}.\par
+
+Dzięki tego rodzaju danym, zwizualizowanym na mapie, możliwe jest stwierdzenie, że najwyższe wydatki (ostatni przedział między 232 a 518 zł) są (poza Wrocławiem) w gminach Kobierzyce, Mietków, Prusice, Trzebnica. Z czego tylko Kobierzyce graniczą z Wrocławiem. W przypadku najniższych wydatków w gminach graniczących z Wrocławiem, dostrzec można dwie – Długołękę i Siechnice (wydatki pomiędzy 88 a 108 zł na osobę). \par
+
+
+To standardowe pytanie o wydatki, które pojawia się, kiedy rozważana jest kwestia polityk kulturalnych, można zadać w sposób, który bardziej dotyczy uczestników wydarzeń kulturalnych, a mniej decydentów politycznych. Odległość od gmin, które posiadają wysokie wydatki na kulturę może być bardziej precyzyjnym wskaźnikiem dostępności kulturalnej, niż same wydatki na kulturę w gminie, w której mieszkają badane osoby. Jeśli mielibyśmy używać tradycyjnych technik badawczych, aby odpowiedzieć na tak postawiony problem badawczy, należałoby zastosować co najmniej dwa narzędzia: mapę i arkusz kalkulacyjny. Dopiero narzędzia klasy GIS pozwalają na integrację danych i ich wizualizację. Dzięki temu można swobodnie modyfikować zapytania, zmieniając tylko zmienne, punkt wyjściowy, odległość czy wskaźnik ilościowy. Przykłady takich modyfikacji prezentują kolejne mapy (Rysunek \ref{figure:19}). W pierwszym wypadku dane dotyczą wskaźnika sumarycznego wydatków na kulturę dla gmin w odległości 25 km od Ratusza Miejskiego we Wrocławiu. W drugim, dane o wydatkach na kulturę, w przeliczeniu na mieszkańca są wygenerowane dla gmin znajdujących się w odległości 25 km od Pałacu Kultury i Nauki w Warszawie.
+\begin{figure}[]
+\caption{Wydatki na kulturę na mieszkańca gmin w okolicach Wrocławia.}
+\includegraphics[width=1.1\textwidth]{/home/mariusz/Obrazy/giskulturaraport/qgis4a.png}
+%\centering
+\label{figure:18}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure} \par
+
+\begin{figure}[h]
+\caption{Wydatki na kulturę w gminach w okolicach Wrocławia i Warszawy.}
+\includegraphics[width=0.95\textwidth]{/home/mariusz/Obrazy/giskulturaraport/qgis3a.png}
+%\centering
+\label{figure:19}
+\vfill
+%\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure} \par
+\begin{figure}[b]
+%\caption{Wydatki na kulturę na mieszkańca w okolicach Warszawy}
+\includegraphics[width=0.95\textwidth]{/home/mariusz/Obrazy/giskulturaraport/qgis5a.png}
+%\centering
+\label{figure:20}
+\vfill
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure} \par
+
+\pagebreak
+\clearpage
+
+\subsection{Obiekty przy drodze.}
+Prototypowa baza systemu GIS Kultura to jednak przede wszystkim możliwość wykonywania analiz na poziomie pojedynczych obiektów. System, dzięki danym o siatce dróg pozwala odpowiadać na pytania o dostępność z uwzględnieniem istniejącej infrastruktury. Z punktu widzenia uczestnika wydarzeń kulturalnych pytanie, które może zostać zadane  bazie danych, mogłoby brzmieć następująco – gdzie znajduje się najbliższe kino i jakie obiekty znajdują się na trasie dojazdu do niego? W tej części raportu zostanie zaprezentowana odpowiedź na podobne pytanie: jakie obiekty znajdują się w odległości 50 m od najszybszej trasy między Warszawą a Gdańskiem, przy założeniu że poruszamy się komunikacją samochodową? Aby odpowiedzieć należało wykonać kilka czynności. Przy użyciu oprogramowania QGIS i wtyczki „optymalna droga”, została wyznaczona trasa pomiędzy dwoma punktami, zaś jako kryterium kosztu dotarcia obrany został czas. Czas dotarcia określany jest przez założenie, że podróż odbywa się maksymalną dopuszczalną prędkością na danym odcinku (taka informacja znajduje się bazie danych, w pliku z geometriami dróg). Kolejną czynnością jest wyznaczenie bufora odległości od wyznaczonej trasy. Bufor został określony na 50 m. Następnie, baza danych została odpytana, jakie obiekty żywej kultury znajdują się w wyznaczonym buforze. Efekt pracy prezentuje Rysunek \ref{figure:21} 
+
+\begin{figure}[h]
+\caption{Obiekty w odległości 50 m od najszybszej trasy Warszawa-Gdańsk (N=544).}
+\includegraphics[width=1.1\textwidth]{/home/mariusz/Obrazy/giskulturaraport/mapa6.png}
+\centering
+\label{figure:21}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure} \par
+W odległości 50 m od najszybszej trasy samochodowej Warszawa – Gdańsk znajduje się 544 obiektów żywej kultury. Informacje, którą można dodatkowo uzyskać to pełen wgląd w dane o każdym z obiektów. Na najniższym poziomie może być to nazwa i rodzaj indeksu obiektu żywej kultury. Przykładowe 10 obiektów znajdujących się przy trasie prezentuje Tabela \ref{Table:10}.
+
+\begin{table}[]
+\centering
+\caption{Przykładowe 9 obiektów znajdujących się w odległości 50 m od najszybszej trasy Warszawa-Gdańsk.}
+\label{Table:10}
+\scalebox{1} {
+\begin{tabular}{l|l|l|}
+Obiekt OSM        & Nazwa                  & Typ OZK                                    \\\hline\hline
+stop\_position\_  & Ratuszowa-ZOO 04       & Infrastruktura transportowa                \\
+stop\_position\_  & Siwińskiego 02         & Infrastruktura transportowa                \\
+shop\_supermarket & Biedronka              & Infrastruktura handlowa                    \\
+office\_company   & zabart.com             & Infrastruktura usług produkcyjnych         \\
+amenity\_fuel     & Stacja-LPG             & Infrastruktura transportowa                \\
+shop\_convenience & Delikatesy Panorama    & Infrastruktura handlowa                    \\
+amenity\_bank     & Alior Bank             & Infrastruktura instytucji finansowych      \\
+office            & Biuro rachunkowe Jovix & Nieokreślona                               \\
+craft             & Serwis Estey           & Infrastruktura rzemiosła i kultury ludowej     
+\end{tabular}
+}
+\vfill
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{table}	
+Dane o obiektach ze względu na typ indeksu żywej kultury prezentuje Wykres 8. Blisko 20\% obiektów pozostało niezidentyfikowanych. Tutaj ponownie uwidacznia się problem z automatyczną klasyfikacją danych. Jednak używając tradycyjnych, nadzorowanych metod klasyfikacji, możliwe jest bardziej precyzyjne przyporządkowanie obiektów do indeksów żywej kultury. Dane tu prezentowane pochodzą z bazy openstreetmap, sprzed harmonizacji, co sprawia, że więcej wysiłku należy włożyć w ich uporządkowanie. Natomiast nawet takie dane można poddawać dalszej obróbce. Wśród ponad 100 obiektów kategorii \textit{Nieokreślone} można szukać kategorii typów w. słownika openstreetmap. Dane prezentuje Rysunek \ref{figure:23}.
+
+\begin{landscape}
+\thispagestyle{empty}
+\begin{figure}[h]
+\caption{Obiekty żywej kultury na trasie Warszawa-Gdańsk (n=544).}
+\includegraphics[width=21.5cm, height=14cm]{/home/mariusz/Obrazy/giskulturaraport/wykres8.eps}
+\centering
+\label{figure:22}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure} 
+\end{landscape}
+
+\begin{figure}[]
+\caption{Obiekty na trasie Warszawa-Gdańsk, bez przypisanego indeksu żywej kultury (n=107).}
+\includegraphics[width=1.25\textwidth]{/home/mariusz/Obrazy/giskulturaraport/wykres9a.eps}
+\label{figure:23}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure} \par
+\pagebreak
+\clearpage
+
+\subsection{Obiekty przy trasie komunikacji publicznej.}
+Poprzedni opisany przypadek pozwala analizować sytuacje, w których dostępność do infrastruktury jest związana z poruszaniem się pieszo lub samochodem. Jednak kiedy dostęp do kultury potraktuje się jako formę usługi publicznej, gwarantowanej przez jednostki samorządu terytorialnego można zadać pytanie czy istnieje infrastruktura transportowa umożliwiająca dostęp do tych usług? Wskaźnikiem takiej dostępności będzie po pierwsze - bliskość przystanku autobusowego; a po drugie, informacja czy i jakie linie autobusowe zatrzymują się na tym przystanku. W tym celu można wykorzystać dane serwisu openstreetmap. Usługa transportu publicznego w gminach jest realizowana przez władze gminne w różny sposób. Skutkuje to brakiem ogólnokrajowej koordynacji, a w konsekwencji bazy danych o tego typu usługach. Dane są zbierane przede wszystkim przez serwisy komercyjne (w Polsce najpopularniejszy serwis tego typu to jakdojade.pl). Serwis społecznościowy openstreetmap stanowi więc alternatywę dla usług zamkniętych i pozwala na analizy dostępności komunikacyjnej.\par
+W tej części zostanie zaprezentowana odpowiedź na następujące pytanie – przy jakiej linii autobusowej w Warszawie znajduje się najwięcej obiektów żywej kultury? Następnie zostaną one zliczone i zwizualizowane. W tym celu ponownie można wykorzystać bazę relacyjną postgresql i składnię SQL. Założeniem jest, że interesują nas tylko obiekty leżące w odległości 50 m od dróg, którymi porusza się autobus. Komenda prezentuje się następująco:\par
+	
+\begingroup
+\fontsize{10pt}{9pt}\selectfont
+\begin{verbatim}
+SELECT 
+ r.name,
+  COUNT(DISTINCT public.osm_poi_custom_acces_30_10_2016.id) As tot
+FROM 
+  public.osm_poi_custom_acces_30_10_2016
+	INNER JOIN public.linie_relacje_komunikacja_publiczna_osm_20_10_2016 As r
+	ON ST_DWithin(osm_poi_custom_acces_30_10_2016.geom, r.way, 50)
+WHERE r.name LIKE '%Bus%'
+GROUP BY r.name
+ORDER BY tot DESC
+LIMIT 8;
+\end{verbatim}
+\endgroup
+
+Efektem działania komendy jest lista 8 linii autobusowych, przy których system odnalazł największą liczbę obiektów żywej kultury. Dane prezentuje Tabela \ref{Table:11}. Wszystkie wyniki to linie autobusowe komunikacji ZTM Warszawa. Baza danych o transporcie openstreetmap jest na tyle precyzyjna, że wskazuje także kierunek trasy autobusowej.
+
+\begin{table}[]
+\centering
+\caption{ Linie autobusowe, przy trasie których znajduje się największa liczba obiektów żywej kultury}
+\label{Table:11}
+\scalebox{1} {
+\begin{tabular}{ll|r|}
+Nr linii & Nazwa linii                                                 & Liczba obiektów \\\hline\hline
+Bus 116: & Chomiczówka =\textgreater Wilanów                  & 930             \\
+& Wilanów =\textgreater Chomiczówka                  & 874             \\\hline
+Bus 521:& Szczęśliwice =\textgreater Falenica                & 818             \\
+& Falenica =\textgreater Szczęśliwice                & 811             \\\hline
+Bus 518:& Nowodwory =\textgreater Dworzec Centralny          & 756             \\
+Bus 517:& Ursus-Niedźwiadek =\textgreater Witebska           & 752             \\
+Bus N44:& Zajezdnia Żoliborz =\textgreater Dworzec Centralny & 744             \\
+Bus N03:& Nowodwory =\textgreater Ursynów Płn.               & 727      
+\end{tabular}
+}
+\vfill
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{table}	
+
+Najwięcej obiektów żywej kultury (930) znajduje na trasie linii autobusu 116 z Chomiczówki do Wilanowa. Druga w kolejności to linia 116, ale jeżdżąca w przeciwnym kierunku (liczba obiektów jest mniejsza o 56). Różnica wynika z tego, że autobusy jeżdżą różnymi drogami, np. cześć dróg jest jednokierunkowa. Następną czynnością pozostaje określenie jakiego typu są to obiekty. Jest to czynność analogiczna do tej, przy pomocy której określane były obiekty na trasie Warszawa-Gdańsk. Efekt takiego działania prezentuje Rysunek \ref{figure:25}. 
+Na trasie linii 116 najwięcej jest obiektów infrastruktury gastronomicznej (233), transportowej (221) i handlowej (156); mając jednak do dyspozycji pełen wgląd w dane, można określić jakiego rodzaju są to obiekty. Przykładowe informacje o obiektach prezentuje \ref{Table:12}. 
+
+\begin{landscape}
+\thispagestyle{empty}
+\begin{figure}[h]
+\caption{Obiekty żywej kultury na trasie linii autobusowej 116, wg typów indeksów. Legenda sortowana alfabetycznie.}
+\includegraphics[width=21.5cm, height=14cm]{/home/mariusz/Obrazy/giskulturaraport/mapa7a.png}
+\centering
+\label{figure:25}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure} 
+\end{landscape}	
+
+\begin{table}[h]
+\centering
+\caption{Przykładowe obiekty żywej kultury  przy trasie linii autobusowej 116, z uwzględnieniem dostępu dla osób poruszających się na wózkach inwalidzkich.}
+\label{Table:12}
+%\scalebox{0.9} {
+\begin{tabular}{m{3cm}|m{4.25cm}|m{3cm}|m{3.5cm}|}
+Typ obiektu OSM          & Nazwa                                                                      & Kategoria infrastruktury                   & czy dostępny dla osób z niepełnosprawnością \\\hline\hline
+Building                 & Grocery                                                                    & nieokreślona                               & Brak danych                                       \\\hline
+Amenity                  & Ministerstwo Kultury i Dziedzictwa Narodowego; Departament Mecenatu Państwa & nieokreślona                               & Brak danych                                        \\\hline
+shop\_clothes            & Ermenegildo Zegna                                                          &  handlowa                    & Brak danych                                        \\\hline
+amenity\_bank            & BZ WBK                                                                     &  instytucji finansowych      & Brak danych                                        \\\hline
+amenity\_bank            & Pekao                                                                      & instytucji finansowych      & Brak danych                                       \\\hline
+shop\_newsagent          & Looksim                                                                    &  usług kulturalnych          & Brak danych                                       \\\hline
+stop\_position\_platform & Krucza 02                                                                  &  transportowa                & Tak                                        
+\end{tabular}
+%}
+\end{table}
+
+\subsection{Zasięg dostępności obiektu. Metoda izochronu.}
+
+Wśród wielu zapytań przestrzennych, które są możliwe do zrealizowania w projekcie „GIS Kultura”, może pojawić się i takie, które wyrażone przez uczestnika wydarzenia kultury będzie brzmiało – do jakich obiektów kultury mogę dotrzeć w ciągu 10 minut od miejsca zamieszkania? Odległość w nieformalnej komunikacji wyrażana jest przez czas, jaki należy poświęcić, żeby dotrzeć do pewnego miejsca. W takim określeniu związku czasu i przestrzeni konieczne jest założenie o prędkości poruszania się. W przypadku, kiedy osoba porusza się pieszo – założeniem jest, że średnio pokonuje 5 km na godzinę, dla samochodów zmiennych jest więcej, żeby wspomnieć o dwóch –  jest to dopuszczalna prędkość na drodze i natężenie ruchu na niej. Zdobywanie informacji o natężeniu ruchu wymaga systemu, który pozwala na ciągłe zdobywanie informacji o zachowaniach komunikacyjnych użytkowników dróg. Dlatego też w systemie „GIS Kultura” przyjęliśmy bardziej ogólne założenia, wynikające ze średniej prędkości poruszania się dla pieszego, i maksymalnej prędkości dopuszczalnej dla samochodu. Poniżej przedstawiony jest opis możliwości analiz, które wychodzą od zapytania dotyczącego dostępności wg czasu dotarcia. Prezentację graficzną przedstawia Rysunki \ref{figure:26} i \ref{figure:27}.
+
+\begin{figure}[]
+\caption{Obiekty żywej kultury w dostępności 12 minut od Domu Kultury (Sierpiec).}
+\includegraphics[width=0.9\textwidth]{/home/mariusz/Obrazy/giskulturaraport/qgis6.png}
+\centering
+\label{figure:26}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure} \par
+
+\begin{landscape}
+	\thispagestyle{empty}
+\begin{figure}[]
+\caption{Informacje o obiektach żywej kultury w dostępności 12 minut od Domu Kultury.}
+\includegraphics[width=21.5cm, height=14cm]{/home/mariusz/Obrazy/giskulturaraport/qgis7.png}
+\centering
+\label{figure:27}
+\raggedbottom{Źródło: Mariusz Piotrowski, opracowanie własne}
+\end{figure} 
+\end{landscape}
+\chapter{Zakończenie}
+Budowa systemu geoinformacji o obiektach żywej kultury „GIS Kultura” jest przedsięwzięciem prototypowym. Jego możliwości analityczne zostały dotychczas wykorzystane m.in. w projektach prowadzonych przez Fundację Obserwatorium Żywej Kultury – Sieć Badawczą takich, jak: „Wpływ diagnoz i badań na realizację polityk kulturalnych w gminach i województwach” czy też badania publiczności Starego Teatru w Krakowie. Z zainteresowaniem spotkały się prezentacje projektu „GIS Kultura” w środowisku naukowym, np. na XIV Ogólnopolskim Zjeździe Socjologicznym czy dla animatorów kultury, którzy brali udział w projekcie Dom Kultury + oraz podczas paneli organizowanych przy okazji realizacji pierwszego wspomnianego projektu. Konstrukcja systemu, zarówno w warstwie wykorzystanych źródeł danych, jak i podejścia do analiz, pozwala na jego wykorzystanie przez teoretyków, w empirycznych badaniach kultury oraz – co szczególnie ważne - przez praktyków. Myślenie o zasobach kulturalnych, nieoczywistych, ale dostępnych przestrzennie, chociażby w kategoriach odległości pomiędzy rozmaitymi podmiotami, pozwala na racjonalne wykorzystanie synergii w działaniach animatorów kultury. Sieciowanie rozmaitych instytucji kultury, będące wynikiem nie tyko pokrewnej funkcji czy specyfiki działań, ale także bliskości i dostępności przestrzennej, może być zasobem, chociaż rzadko dotąd branym pod uwagę i opisywanym, to jednak potencjalnie bardzo wartościowym, co starałem się pokazać w niniejszym raporcie. 
+
+\chapter*{Bibliografia}
+
+\begin{itemize}
+\item Jochen Albrecht, \textit{Key concepts \& techniques in GIS}, SAGE Publica-
+tions, 2007
+\item Rafał Drozdowski, Barbara Fatyga, Mirosław Filiciak, Marek Krajew-
+ski, Tomasz Szlendak, \textit{Praktyki kulturalne Polaków}, Wydawnictwo
+UMK, Toruń, 2014
+\item  Richard Florida, \textit{Narodziny klasy kreatywnej}, NCK, Warszawa, 2010
+\item  Waldemar Izdebski, \textit{Dobre praktyki udziału gmin i powiatów w tworzeniu infrastruktury danych przestrzennych w Polsce}, Geo-System, Warszawa, 2015
+\item  Bohdan Jałowiecki, Wojciech Łukowski (red.), \textit{ Szata informacyjna
+miasta}, Scholar, Warszawa, 2008
+\item  Dobiesław Jȩdrzejczyk, \textit{Geografia humanistyczna miasta}, Wydawn.
+Akademickie "Dialog", 2004
+\item Tomasz Kukołowicz  (red.),\textit{ Statystyka kultury w Polsce i Europie. Aktualne zagadnienia}, NCK, Warszawa, 2015
+\item  Antonina Kłoskowska, \textit{Społeczne ramy kultury}, PWN, Warszawa, 1972
+\item  Antonina Kłoskowska, \textit{Kultura masowa: krytyka i obrona}, PWN, War-
+szawa, 2006
+\item  Antonina Kłoskowska, \textit{Socjologia kultury}, PWN, Warszawa, 2007
+\item  Elaine Lewinnek, \textit{Mapping Chicago, Imagining Metropolises: Reconsi-
+dering the Zonal Model of Urban Growth} [w:] \textit{"Journal of Urban History"},
+36(2):197–225, 2010
+\item  Beata Medyńska-Gulij, \textit{Kartografia i geowizualizacja}, PWN, Warszawa,
+2011
+\item \textit{Nowa sprawozdawczość instytucji kultury}, Kraków: MIK, 2015
+\item Zbigniew Taylor, \textit{Przestrzenna dostępność miejsc zatrudnienia, kształcenia i usług a codzienna ruchliwość ludności wiejskiej}, [w:] \textit{„Prace Geograficzne IGiPZ PAN”}, nr 171, Wrocław 1999.
+\item  Andrzej Tyszka, \textit{Interesy i ideały kultury struktura społeczeństwa i
+udział w kulturze}, PWN, Warszawa, 1987
+\item  Aleksander Wallis, \textit{Informacja i gwar}, PIW, Warszawa, 1979
+\item  Aleksander Wallis, \textit{Hierarchia miast} [w:] \textit{"Studia socjologiczne"}, 1(200), 2011
+\item  Grzegorz Wȩcławowicz,\textit{ Geografia społeczna miast}, PWN, Warszawa,
+2007
+\item  James D Wright,\textit{ The Founding Fathers of Sociology : Francis Galton, Adolphe Quetelet , and Charles Booth Or What Do People You Probably Never Heard of Have to Do with the Foundations of Sociology?} [w:] \textit{"Journal of Applied Social Science"}, 3(2):63–72, 2016
+\item  Janusz Ziółkowski, \textit{Urbanizacja, miasto, osiedle. Studia socjologiczne},
+PWN, Warszawa, 1965.
+\item Florian Znaniecki, Socjologiczne podstawy ekologii ludzkiej,[w] \textit{„Ruch Prawniczy, Ekonomiczny i Socjologiczny”}, z. 1/1938. 
+\item  Wiesława Żyszkowska, Waldemar Alfred Spallek, Dorota Borowicz,
+\textit{Kartografia tematyczna}, PWN, Warszawa, 2012
+\end{itemize}
+
+
+\end{document}
+
+
